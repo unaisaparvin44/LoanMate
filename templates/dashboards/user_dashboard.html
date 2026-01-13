@@ -1,15 +1,559 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>User Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard | LoanMate</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dashboard-header h1 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .dashboard-header p {
+            color: #666;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .user-details h5 {
+            margin: 0;
+            color: #333;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-details p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Action Cards */
+        .action-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .action-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .action-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .action-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .action-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-card-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .action-card-icon.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .action-card-icon.success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .action-card h3 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+
+        .action-card p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .action-card-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .action-card-btn:hover {
+            transform: translateX(5px);
+            color: white;
+        }
+
+        /* Info Section */
+        .info-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 0.6s ease-out 0.3s;
+            animation-fill-mode: both;
+        }
+
+        .info-section h4 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: start;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .info-content h6 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .info-content p {
+            margin: 0;
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 25px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .logout-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-header h1 {
+                font-size: 24px;
+            }
+
+            .action-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .logout-btn {
+                position: static;
+                width: 100%;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+        }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .custom-toast {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 20px 25px;
+            margin-bottom: 15px;
+            min-width: 350px;
+            max-width: 450px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: slideInRight 0.4s ease-out;
+            border-left: 5px solid #28a745;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .custom-toast.hiding {
+            animation: slideOutRight 0.4s ease-out forwards;
+        }
+
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+        }
+
+        .toast-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 15px;
+        }
+
+        .toast-message {
+            color: #666;
+            font-size: 13px;
+            margin: 0;
+        }
+
+        .toast-close {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .toast-close:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        @media (max-width: 576px) {
+            .toast-container {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+            }
+
+            .custom-toast {
+                min-width: auto;
+                max-width: none;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <h1>User Dashboard</h1>
-    <p>Loan application and tracking</p>
-    <p><a href="{% url 'loans:apply_loan' %}">Apply for Loan</a></p>
-    <p><a href="{% url 'loans:my_applications' %}">My Applications</a></p>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="custom-toast">
+            <div class="toast-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="toast-content">
+                <div class="toast-title">Success!</div>
+                <p class="toast-message">{{ message }}</p>
+            </div>
+            <button class="toast-close" onclick="closeToast(this)">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Logout Button -->
+    <a href="{% url 'accounts:login' %}" class="logout-btn">
+        <i class="fas fa-sign-out-alt me-2"></i>Logout
+    </a>
+
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1><i class="fas fa-tachometer-alt me-3"></i>User Dashboard</h1>
+            <p>Welcome to your LoanMate dashboard - Manage your loan applications</p>
+
+            <div class="user-info">
+                <div class="user-avatar">
+                    {{ user.username|slice:":1"|upper }}
+                </div>
+                <div class="user-details">
+                    <h5>{{ user.username }}</h5>
+                    <p><i class="fas fa-envelope me-2"></i>{{ user.email|default:"No email provided" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Cards -->
+        <div class="action-cards">
+            <!-- Apply for Loan Card -->
+            <div class="action-card">
+                <div class="action-card-icon primary">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <h3>Apply for Loan</h3>
+                <p>Start a new loan application and get quick approval from our officers</p>
+                <a href="{% url 'loans:apply_loan' %}" class="action-card-btn">
+                    Apply Now <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- My Applications Card -->
+            <div class="action-card">
+                <div class="action-card-icon success">
+                    <i class="fas fa-list-alt"></i>
+                </div>
+                <h3>My Applications</h3>
+                <p>Track and view the status of all your loan applications</p>
+                <a href="{% url 'loans:my_applications' %}" class="action-card-btn">
+                    View Applications <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="info-section">
+            <h4><i class="fas fa-info-circle me-2"></i>How It Works</h4>
+
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <div class="info-content">
+                    <h6>1. Submit Application</h6>
+                    <p>Fill out the loan application form with your details and requirements</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="info-content">
+                    <h6>2. Wait for Review</h6>
+                    <p>Our loan officers will review your application within 24-48 hours</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="info-content">
+                    <h6>3. Get Approved</h6>
+                    <p>Once approved, you'll receive notification and can proceed with the loan</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Toast Notification Script -->
+    <script>
+        // Close toast function
+        function closeToast(button) {
+            const toast = button.closest('.custom-toast');
+            toast.classList.add('hiding');
+            setTimeout(() => {
+                toast.remove();
+            }, 400);
+        }
+
+        // Auto-dismiss toasts after 5 seconds
+        document.addEventListener('DOMContentLoaded', function () {
+            const toasts = document.querySelectorAll('.custom-toast');
+            toasts.forEach(toast => {
+                setTimeout(() => {
+                    toast.classList.add('hiding');
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 400);
+                }, 5000); // 5 seconds
+            });
+        });
+    </script>
 </body>
 
 </html>

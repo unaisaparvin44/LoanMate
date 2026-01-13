@@ -1,185 +1,387 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login | LoanMate</title>
-</head>
 
-<body>
-  <h2>Login</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-  </form>
-  <p style="margin-top: 10px;">
-    Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a>
-  </p>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    /* Minimal styles for password enhancements */
-    .password-wrapper {
-      position: relative;
-      display: inline-block;
-      width: 100%;
-      max-width: 300px;
-      /* Match default input usually */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    /* Ensure existing input styling doesn't break when wrapped */
-    .password-wrapper input {
+    body {
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-container {
       width: 100%;
-      padding-right: 40px;
-      /* Space for eye icon */
-      box-sizing: border-box;
+      max-width: 450px;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .login-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+
+    .login-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 30px;
+      text-align: center;
+      color: white;
+    }
+
+    .login-header i {
+      font-size: 50px;
+      margin-bottom: 15px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+    }
+
+    .login-header h2 {
+      font-weight: 600;
+      margin-bottom: 5px;
+      font-size: 28px;
+    }
+
+    .login-header p {
+      font-size: 14px;
+      opacity: 0.9;
+      margin: 0;
+    }
+
+    .login-body {
+      padding: 40px 30px;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-label {
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .input-group {
+      position: relative;
+    }
+
+    .input-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #667eea;
+      z-index: 10;
+    }
+
+    .form-control {
+      padding: 12px 15px 12px 45px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .password-wrapper {
+      position: relative;
     }
 
     .toggle-password {
       position: absolute;
-      right: 10px;
+      right: 15px;
       top: 50%;
       transform: translateY(-50%);
       cursor: pointer;
-      user-select: none;
+      color: #667eea;
+      z-index: 10;
+      transition: color 0.3s ease;
+    }
+
+    .toggle-password:hover {
+      color: #764ba2;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    .divider {
+      text-align: center;
+      margin: 25px 0;
+      position: relative;
+    }
+
+    .divider::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 100%;
+      height: 1px;
+      background: #e0e0e0;
+    }
+
+    .divider span {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 0 15px;
+      position: relative;
+      color: #666;
       font-size: 14px;
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 20px;
       color: #666;
+      font-size: 14px;
     }
 
-    .validation-checklist {
-      list-style: none;
-      padding: 0;
-      margin-top: 5px;
-      font-size: 0.85em;
-      color: #666;
-      display: none;
-      /* Hidden until interaction */
+    .register-link a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
     }
 
-    .validation-checklist li {
-      margin-bottom: 2px;
-      display: flex;
-      align-items: center;
+    .register-link a:hover {
+      color: #764ba2;
+      text-decoration: underline;
     }
 
-    .validation-checklist li:before {
-      content: "○";
-      margin-right: 8px;
+    .alert {
+      border-radius: 10px;
+      margin-bottom: 20px;
+      padding: 12px 15px;
+      font-size: 14px;
     }
 
-    .validation-checklist li.valid {
-      color: green;
-    }
-
-    .validation-checklist li.valid:before {
-      content: "✔";
-    }
-
-    .validation-checklist li.invalid {
-      color: #888;
-      /* keeping neutral when typing, or red if strict? User said red/grey */
-    }
-
-    .validation-error-msg {
-      color: red;
-      font-size: 0.9em;
-      margin-top: 5px;
-      display: none;
-    }
-  </style>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const passwordInput = document.querySelector('input[name="password"]');
-      if (!passwordInput) return; // Guard clause if field missing
-
-      // Identify the form
-      const form = passwordInput.closest('form');
-
-      // 1. DOM STRUCTURING
-      // Create wrapper
-      const wrapper = document.createElement('div');
-      wrapper.className = 'password-wrapper';
-      passwordInput.parentNode.insertBefore(wrapper, passwordInput);
-      wrapper.appendChild(passwordInput);
-
-      // Create toggle button
-      const toggleBtn = document.createElement('span');
-      toggleBtn.className = 'toggle-password';
-      toggleBtn.textContent = 'Show';
-      wrapper.appendChild(toggleBtn);
-
-      // Create Checklist
-      const checklist = document.createElement('ul');
-      checklist.className = 'validation-checklist';
-      checklist.innerHTML = `
-        <li id="rule-length">Min 8 chars</li>
-        <li id="rule-upper">Uppercase (A-Z)</li>
-        <li id="rule-lower">Lowercase (a-z)</li>
-        <li id="rule-digit">Digit (0-9)</li>
-        <li id="rule-special">Special (!@#$%^&*)</li>
-      `;
-      // Insert checklist after the wrapper (usually inside the <p> from as_p or after)
-      wrapper.parentNode.insertBefore(checklist, wrapper.nextSibling);
-
-      // Create inline error message container
-      const errorMsg = document.createElement('div');
-      errorMsg.className = 'validation-error-msg';
-      errorMsg.textContent = 'Password does not meet required criteria.';
-      wrapper.parentNode.insertBefore(errorMsg, checklist.nextSibling);
-
-      // 2. TOGGLE LOGIC
-      toggleBtn.addEventListener('click', function () {
-        if (passwordInput.type === 'password') {
-          passwordInput.type = 'text';
-          toggleBtn.textContent = 'Hide';
-        } else {
-          passwordInput.type = 'password';
-          toggleBtn.textContent = 'Show';
-        }
-      });
-
-      // 3. VALIDATION LOGIC
-      const rules = {
-        length: val => val.length >= 8,
-        upper: val => /[A-Z]/.test(val),
-        lower: val => /[a-z]/.test(val),
-        digit: val => /[0-9]/.test(val),
-        special: val => /[!@#$%^&*]/.test(val)
-      };
-
-      function validate() {
-        const val = passwordInput.value;
-        let allValid = true;
-
-        checklist.style.display = 'block'; // Show on type
-
-        for (const [key, test] of Object.entries(rules)) {
-          const item = document.getElementById(`rule-${key}`);
-          if (test(val)) {
-            item.classList.add('valid');
-            item.classList.remove('invalid');
-          } else {
-            item.classList.remove('valid');
-            item.classList.add('invalid');
-            allValid = false;
-          }
-        }
-        return allValid;
+    /* Responsive */
+    @media (max-width: 576px) {
+      .login-header {
+        padding: 30px 20px;
       }
 
-      passwordInput.addEventListener('input', function () {
-        validate();
-        errorMsg.style.display = 'none'; // Hide error when user types
-      });
+      .login-header h2 {
+        font-size: 24px;
+      }
 
-      // 4. SUBMISSION BLOCKING
-      form.addEventListener('submit', function (e) {
-        if (!validate()) {
-          e.preventDefault();
-          errorMsg.style.display = 'block';
-          checklist.style.display = 'block';
-        }
-      });
+      .login-body {
+        padding: 30px 20px;
+      }
+    }
+
+    /* Loading animation */
+    .btn-login.loading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .btn-login.loading::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      left: 50%;
+      margin-left: -8px;
+      margin-top: -8px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spinner 0.6s linear infinite;
+    }
+
+    @keyframes spinner {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <!-- Header -->
+      <div class="login-header">
+        <i class="fas fa-hand-holding-usd"></i>
+        <h2>Welcome Back!</h2>
+        <p>Login to access your LoanMate account</p>
+      </div>
+
+      <!-- Body -->
+      <div class="login-body">
+        <!-- Error Messages -->
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          <i class="fas fa-exclamation-circle me-2"></i>{{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <!-- Login Form -->
+        <form method="post" id="loginForm">
+          {% csrf_token %}
+
+          <!-- Username Field -->
+          <div class="form-group">
+            <label class="form-label" for="id_username">
+              <i class="fas fa-user me-1"></i> Username
+            </label>
+            <div class="input-group">
+              <i class="fas fa-user"></i>
+              <input type="text" class="form-control" id="id_username" name="username" placeholder="Enter your username"
+                required autofocus>
+            </div>
+          </div>
+
+          <!-- Password Field -->
+          <div class="form-group">
+            <label class="form-label" for="id_password">
+              <i class="fas fa-lock me-1"></i> Password
+            </label>
+            <div class="password-wrapper">
+              <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" class="form-control" id="id_password" name="password"
+                  placeholder="Enter your password" required>
+                <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Login Button -->
+          <button type="submit" class="btn btn-login">
+            <i class="fas fa-sign-in-alt me-2"></i> Login
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="divider">
+          <span>New to LoanMate?</span>
+        </div>
+
+        <!-- Register Link -->
+        <div class="register-link">
+          Don't have an account?
+          <a href="{% url 'accounts:register' %}">
+            <i class="fas fa-user-plus me-1"></i>Register here
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom JS -->
+  <script>
+    // Password Toggle
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('id_password');
+
+    togglePassword.addEventListener('click', function () {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+
+      // Toggle icon
+      this.classList.toggle('fa-eye');
+      this.classList.toggle('fa-eye-slash');
     });
+
+    // Form Submit Animation
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = loginForm.querySelector('.btn-login');
+
+    loginForm.addEventListener('submit', function () {
+      loginBtn.classList.add('loading');
+      loginBtn.innerHTML = '<span>Logging in...</span>';
+    });
+
+    // Auto-hide alerts after 5 seconds
+    setTimeout(function () {
+      const alerts = document.querySelectorAll('.alert');
+      alerts.forEach(function (alert) {
+        const bsAlert = new bootstrap.Alert(alert);
+        bsAlert.close();
+      });
+    }, 5000);
   </script>
 </body>
 
