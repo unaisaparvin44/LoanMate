@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}All Applications{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>All Loan Applications</h2>
+
+    <!-- Filter UI -->
+    <div class="card mt-3 mb-3">
+        <div class="card-body">
+            <h6 class="card-subtitle mb-3 text-muted">Filter by Status:</h6>
+            <div class="btn-group" role="group">
+                <a href="{% url 'officers:application_all' %}"
+                    class="btn btn-sm {% if current_filter == 'ALL' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                    All
+                </a>
+                <a href="{% url 'officers:application_all' %}?status=PENDING"
+                    class="btn btn-sm {% if current_filter == 'PENDING' %}btn-warning{% else %}btn-outline-warning{% endif %}">
+                    Pending
+                </a>
+                <a href="{% url 'officers:application_all' %}?status=APPROVED"
+                    class="btn btn-sm {% if current_filter == 'APPROVED' %}btn-success{% else %}btn-outline-success{% endif %}">
+                    Approved
+                </a>
+                <a href="{% url 'officers:application_all' %}?status=REJECTED"
+                    class="btn btn-sm {% if current_filter == 'REJECTED' %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                    Rejected
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if applications %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Loan Type</th>
+                <th>Amount</th>
+                <th>Tenure (months)</th>
+                <th>Status</th>
+                <th>Reviewed At</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in applications %}
+            <tr>
+                <td>{{ app.user.username }}</td>
+                <td>{{ app.loan_type.name }}</td>
+                <td>₹{{ app.loan_amount }}</td>
+                <td>{{ app.loan_tenure }}</td>
+                <td>
+                    <span class="badge 
+                        {% if app.status == 'PENDING' %}bg-warning
+                        {% elif app.status == 'APPROVED' %}bg-success
+                        {% else %}bg-danger{% endif %}">
+                        {{ app.get_status_display }}
+                    </span>
+                </td>
+                <td>
+                    {% if app.reviewed_at %}
+                    {{ app.reviewed_at|date:"Y-m-d H:i" }}
+                    {% else %}
+                    —
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'officers:application_detail' app.pk %}" class="btn btn-sm btn-primary">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info mt-3">
+        No applications found for the selected filter.
+    </div>
+    {% endif %}
+
+    <a href="{% url 'officer_dashboard' %}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</div>
+{% endblock %}

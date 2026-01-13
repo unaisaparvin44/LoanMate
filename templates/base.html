@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LoanMate{% endblock %}</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+
+        header {
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        footer {
+            margin-top: 50px;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .messages {
+            list-style: none;
+            padding: 0;
+        }
+
+        .messages li {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #f0f0f0;
+        }
+
+        .errorlist {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>LoanMate</h1>
+        {% if user.is_authenticated %}
+        <p>Logged in as: <strong>{{ user.username }}</strong></p>
+        {% endif %}
+    </header>
+
+    <main>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 LoanMate</p>
+    </footer>
+</body>
+
+</html>

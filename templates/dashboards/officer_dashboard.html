@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Officer Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Officer Dashboard</h1>
+    <p>Loan review and approval</p>
+
+    <div class="mt-4">
+        <a href="{% url 'officers:application_list' %}" class="btn btn-primary">Review Pending Applications</a>
+        <a href="{% url 'officers:application_all' %}" class="btn btn-secondary">View All Applications / History</a>
+    </div>
+</div>
+{% endblock %}

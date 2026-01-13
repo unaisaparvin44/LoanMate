@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Pending Applications{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Pending Loan Applications</h2>
+
+    {% if applications %}
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Loan Type</th>
+                <th>Amount</th>
+                <th>Tenure (months)</th>
+                <th>Submitted Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in applications %}
+            <tr>
+                <td>{{ app.user.username }}</td>
+                <td>{{ app.loan_type.name }}</td>
+                <td>₹{{ app.loan_amount }}</td>
+                <td>{{ app.loan_tenure }}</td>
+                <td>{{ app.created_at|date:"Y-m-d H:i" }}</td>
+                <td>
+                    <a href="{% url 'officers:application_detail' app.pk %}" class="btn btn-sm btn-primary">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info mt-3">
+        No pending applications at this time.
+    </div>
+    {% endif %}
+
+    <a href="{% url 'officer_dashboard' %}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</div>
+{% endblock %}

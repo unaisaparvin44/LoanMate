@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Application Detail{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Loan Application Details</h2>
+
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5>Application #{{ application.id }}</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Applicant:</strong> {{ application.user.username }}</p>
+                    <p><strong>Email:</strong> {{ application.user.email }}</p>
+                    <p><strong>Loan Type:</strong> {{ application.loan_type.name }}</p>
+                    <p><strong>Loan Amount:</strong> ₹{{ application.loan_amount }}</p>
+                    <p><strong>Loan Tenure:</strong> {{ application.loan_tenure }} months</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Income:</strong> ₹{{ application.income }}</p>
+                    <p><strong>Employment Type:</strong> {{ application.employment_type }}</p>
+                    <p><strong>Credit Score:</strong> {{ application.credit_score }}</p>
+                    <p><strong>Current Status:</strong>
+                        <span class="badge 
+                            {% if application.status == 'PENDING' %}bg-warning
+                            {% elif application.status == 'APPROVED' %}bg-success
+                            {% else %}bg-danger{% endif %}">
+                            {{ application.get_status_display }}
+                        </span>
+                    </p>
+                    <p><strong>Submitted:</strong> {{ application.created_at|date:"Y-m-d H:i" }}</p>
+                    {% if application.reviewed_at %}
+                    <p><strong>Reviewed:</strong> {{ application.reviewed_at|date:"Y-m-d H:i" }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if application.remarks %}
+            <div class="mt-3">
+                <p><strong>Previous Remarks:</strong></p>
+                <p class="text-muted">{{ application.remarks }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if application.status == 'PENDING' %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5>Review Application</h5>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label"><strong>Decision:</strong></label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="status" id="approve" value="APPROVED"
+                            required>
+                        <label class="form-check-label" for="approve">
+                            Approve
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="status" id="reject" value="REJECTED"
+                            required>
+                        <label class="form-check-label" for="reject">
+                            Reject
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="remarks" class="form-label"><strong>Remarks:</strong></label>
+                    <textarea class="form-control" id="remarks" name="remarks" rows="4"
+                        placeholder="Enter your review comments..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Update Status</button>
+                <a href="{% url 'officers:application_list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info mt-4">
+        This application has already been reviewed.
+    </div>
+    <a href="{% url 'officers:application_list' %}" class="btn btn-secondary">Back to Pending List</a>
+    {% endif %}
+</div>
+{% endblock %}

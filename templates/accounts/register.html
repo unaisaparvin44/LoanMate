@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+
+{% block title %}Register | LoanMate{% endblock %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+    <h2>Register</h2>
+
+    {% if errors %}
+    <ul style="color: red; list-style: none; padding: 0;">
+        {% for error in errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post" id="registerForm">
+        {% csrf_token %}
+        <div style="margin-bottom: 15px;">
+            <label>Username</label><br>
+            <input type="text" name="username" value="{{ data.username }}" required style="width: 100%; padding: 8px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label>Email (Optional)</label><br>
+            <input type="email" name="email" value="{{ data.email }}" style="width: 100%; padding: 8px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label>Password</label><br>
+            <div class="password-wrapper">
+                <input type="password" name="password" id="passwordInput" required
+                    style="width: 100%; padding: 8px; padding-right: 40px;">
+                <span class="toggle-password" onclick="togglePassword()">Show</span>
+            </div>
+
+            <ul class="validation-checklist" id="validationChecklist">
+                <li id="rule-length" class="invalid">Min 8 chars</li>
+                <li id="rule-upper" class="invalid">Uppercase (A-Z)</li>
+                <li id="rule-lower" class="invalid">Lowercase (a-z)</li>
+                <li id="rule-digit" class="invalid">Digit (0-9)</li>
+                <li id="rule-special" class="invalid">Special (!@#$%^&*)</li>
+            </ul>
+            <div id="validationErrorMsg" class="validation-error-msg" style="display: none;">Password does not meet
+                required criteria.</div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label>Confirm Password</label><br>
+            <input type="password" name="confirm_password" required style="width: 100%; padding: 8px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label>Role</label><br>
+            <select name="role" style="width: 100%; padding: 8px;">
+                <option value="user" {% if data.role == 'user' %}selected{% endif %}>User (Borrower)</option>
+                <option value="officer" {% if data.role == 'officer' %}selected{% endif %}>Officer (Lender)</option>
+            </select>
+        </div>
+
+        <button type="submit"
+            style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer;">Register</button>
+    </form>
+
+    <p style="margin-top: 15px; text-align: center;">
+        Already have an account? <a href="{% url 'accounts:login' %}">Login</a>
+    </p>
+</div>
+
+<style>
+    .password-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        font-size: 0.9em;
+        color: #666;
+        user-select: none;
+    }
+
+    .validation-checklist {
+        list-style: none;
+        padding: 0;
+        margin-top: 5px;
+        font-size: 0.85em;
+        color: #555;
+    }
+
+    .validation-checklist li {
+        margin-bottom: 2px;
+    }
+
+    .validation-checklist li::before {
+        content: '○ ';
+        color: #999;
+    }
+
+    .validation-checklist li.valid {
+        color: green;
+        font-weight: bold;
+    }
+
+    .validation-checklist li.valid::before {
+        content: '✓ ';
+        color: green;
+    }
+
+    .validation-checklist li.invalid {
+        color: green;
+        /* kept standard, specific override below */
+    }
+
+    .validation-checklist li.invalid {
+        color: #777;
+        /* Default grey for invalid/pending */
+    }
+
+    .validation-error-msg {
+        color: red;
+        font-size: 0.85em;
+        margin-top: 5px;
+        font-weight: bold;
+    }
+</style>
+
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById('passwordInput');
+        const toggleBtn = document.querySelector('.toggle-password');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleBtn.textContent = 'Hide';
+        } else {
+            passwordInput.type = 'password';
+            toggleBtn.textContent = 'Show';
+        }
+    }
+
+    const passwordInput = document.getElementById('passwordInput');
+    const registerForm = document.getElementById('registerForm');
+    const validationErrorMsg = document.getElementById('validationErrorMsg');
+
+    const rules = {
+        length: { regex: /.{8,}/, element: document.getElementById('rule-length') },
+        upper: { regex: /[A-Z]/, element: document.getElementById('rule-upper') },
+        lower: { regex: /[a-z]/, element: document.getElementById('rule-lower') },
+        digit: { regex: /[0-9]/, element: document.getElementById('rule-digit') },
+        special: { regex: /[!@#$%^&*]/, element: document.getElementById('rule-special') }
+    };
+
+    function validatePassword() {
+        const val = passwordInput.value;
+        let allValid = true;
+
+        for (const key in rules) {
+            const rule = rules[key];
+            const isValid = rule.regex.test(val);
+            if (isValid) {
+                rule.element.classList.add('valid');
+                rule.element.classList.remove('invalid');
+            } else {
+                rule.element.classList.add('invalid');
+                rule.element.classList.remove('valid');
+                allValid = false;
+            }
+        }
+        return allValid;
+    }
+
+    passwordInput.addEventListener('input', () => {
+        validatePassword();
+        // Hide error message on input if they are fixing it
+        validationErrorMsg.style.display = 'none';
+    });
+
+    registerForm.addEventListener('submit', function (e) {
+        if (!validatePassword()) {
+            e.preventDefault();
+            validationErrorMsg.style.display = 'block';
+        }
+    });
+</script>
+{% endblock %}

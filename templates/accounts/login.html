@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Login | LoanMate</title>
+</head>
+
+<body>
+  <h2>Login</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Login</button>
+  </form>
+  <p style="margin-top: 10px;">
+    Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a>
+  </p>
+  <style>
+    /* Minimal styles for password enhancements */
+    .password-wrapper {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      max-width: 300px;
+      /* Match default input usually */
+    }
+
+    /* Ensure existing input styling doesn't break when wrapped */
+    .password-wrapper input {
+      width: 100%;
+      padding-right: 40px;
+      /* Space for eye icon */
+      box-sizing: border-box;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      user-select: none;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .validation-checklist {
+      list-style: none;
+      padding: 0;
+      margin-top: 5px;
+      font-size: 0.85em;
+      color: #666;
+      display: none;
+      /* Hidden until interaction */
+    }
+
+    .validation-checklist li {
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+    }
+
+    .validation-checklist li:before {
+      content: "○";
+      margin-right: 8px;
+    }
+
+    .validation-checklist li.valid {
+      color: green;
+    }
+
+    .validation-checklist li.valid:before {
+      content: "✔";
+    }
+
+    .validation-checklist li.invalid {
+      color: #888;
+      /* keeping neutral when typing, or red if strict? User said red/grey */
+    }
+
+    .validation-error-msg {
+      color: red;
+      font-size: 0.9em;
+      margin-top: 5px;
+      display: none;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const passwordInput = document.querySelector('input[name="password"]');
+      if (!passwordInput) return; // Guard clause if field missing
+
+      // Identify the form
+      const form = passwordInput.closest('form');
+
+      // 1. DOM STRUCTURING
+      // Create wrapper
+      const wrapper = document.createElement('div');
+      wrapper.className = 'password-wrapper';
+      passwordInput.parentNode.insertBefore(wrapper, passwordInput);
+      wrapper.appendChild(passwordInput);
+
+      // Create toggle button
+      const toggleBtn = document.createElement('span');
+      toggleBtn.className = 'toggle-password';
+      toggleBtn.textContent = 'Show';
+      wrapper.appendChild(toggleBtn);
+
+      // Create Checklist
+      const checklist = document.createElement('ul');
+      checklist.className = 'validation-checklist';
+      checklist.innerHTML = `
+        <li id="rule-length">Min 8 chars</li>
+        <li id="rule-upper">Uppercase (A-Z)</li>
+        <li id="rule-lower">Lowercase (a-z)</li>
+        <li id="rule-digit">Digit (0-9)</li>
+        <li id="rule-special">Special (!@#$%^&*)</li>
+      `;
+      // Insert checklist after the wrapper (usually inside the <p> from as_p or after)
+      wrapper.parentNode.insertBefore(checklist, wrapper.nextSibling);
+
+      // Create inline error message container
+      const errorMsg = document.createElement('div');
+      errorMsg.className = 'validation-error-msg';
+      errorMsg.textContent = 'Password does not meet required criteria.';
+      wrapper.parentNode.insertBefore(errorMsg, checklist.nextSibling);
+
+      // 2. TOGGLE LOGIC
+      toggleBtn.addEventListener('click', function () {
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          toggleBtn.textContent = 'Hide';
+        } else {
+          passwordInput.type = 'password';
+          toggleBtn.textContent = 'Show';
+        }
+      });
+
+      // 3. VALIDATION LOGIC
+      const rules = {
+        length: val => val.length >= 8,
+        upper: val => /[A-Z]/.test(val),
+        lower: val => /[a-z]/.test(val),
+        digit: val => /[0-9]/.test(val),
+        special: val => /[!@#$%^&*]/.test(val)
+      };
+
+      function validate() {
+        const val = passwordInput.value;
+        let allValid = true;
+
+        checklist.style.display = 'block'; // Show on type
+
+        for (const [key, test] of Object.entries(rules)) {
+          const item = document.getElementById(`rule-${key}`);
+          if (test(val)) {
+            item.classList.add('valid');
+            item.classList.remove('invalid');
+          } else {
+            item.classList.remove('valid');
+            item.classList.add('invalid');
+            allValid = false;
+          }
+        }
+        return allValid;
+      }
+
+      passwordInput.addEventListener('input', function () {
+        validate();
+        errorMsg.style.display = 'none'; // Hide error when user types
+      });
+
+      // 4. SUBMISSION BLOCKING
+      form.addEventListener('submit', function (e) {
+        if (!validate()) {
+          e.preventDefault();
+          errorMsg.style.display = 'block';
+          checklist.style.display = 'block';
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

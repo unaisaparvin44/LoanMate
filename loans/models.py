@@ -39,6 +39,8 @@ class LoanApplication(models.Model):
         default='PENDING'
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    remarks = models.TextField(blank=True, default="")
+    reviewed_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user} - {self.loan_type} - {self.status}"

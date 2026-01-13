@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}My Applications | LoanMate{% endblock %}
+
+{% block content %}
+<h2>My Loan Applications</h2>
+
+{% if applications %}
+<table border="1" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+    <thead>
+        <tr style="background-color: #f2f2f2;">
+            <th style="padding: 8px; text-align: left;">Loan Type</th>
+            <th style="padding: 8px; text-align: left;">Amount</th>
+            <th style="padding: 8px; text-align: left;">Tenure (Months)</th>
+            <th style="padding: 8px; text-align: left;">Status</th>
+            <th style="padding: 8px; text-align: left;">Submitted Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for app in applications %}
+        <tr>
+            <td style="padding: 8px;">{{ app.loan_type.name }}</td>
+            <td style="padding: 8px;">{{ app.loan_amount }}</td>
+            <td style="padding: 8px;">{{ app.loan_tenure }}</td>
+            <td style="padding: 8px;">
+                <span style="
+                        {% if app.status == 'APPROVED' %}color: green;
+                        {% elif app.status == 'REJECTED' %}color: red;
+                        {% else %}color: orange;{% endif %}
+                        font-weight: bold;">
+                    {{ app.get_status_display }}
+                </span>
+            </td>
+            <td style="padding: 8px;">{{ app.created_at|date:"M d, Y" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No applications found.</p>
+{% endif %}
+
+<p style="margin-top: 20px;">
+    <a href="{% url 'user_dashboard' %}">Back to Dashboard</a>
+</p>
+{% endblock %}
