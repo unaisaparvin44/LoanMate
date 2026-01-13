@@ -8,6 +8,7 @@ from .models import LoanApplication
 
 @login_required
 def apply_loan(request):
+    success = False
     if request.method == 'POST':
         form = LoanApplicationForm(request.POST)
         if form.is_valid():
@@ -15,12 +16,12 @@ def apply_loan(request):
             application.user = request.user
             application.status = 'PENDING'
             application.save()
-            messages.success(request, 'Your loan application has been submitted successfully! Our officers will review it soon.')
-            return redirect("/user/dashboard/")
+            success = True
+            form = LoanApplicationForm()  # Reset form after successful submission
     else:
         form = LoanApplicationForm()
     
-    return render(request, 'loans/apply_loan.html', {'form': form})
+    return render(request, 'loans/apply_loan.html', {'form': form, 'success': success})
 
 @login_required
 def my_applications(request):
