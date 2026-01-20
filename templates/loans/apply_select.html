@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Loan Type | LoanMate</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container-custom {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-header h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .page-header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .loan-types-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .loan-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+
+        .loan-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .loan-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loan-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .loan-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .loan-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: white;
+            font-size: 36px;
+            transition: all 0.3s ease;
+        }
+
+        .loan-card:hover .loan-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .loan-card h3 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .loan-card p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .apply-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .loan-card:hover .apply-btn {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: scale(1.05);
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn-back {
+            padding: 14px 35px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-back:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 32px;
+            }
+
+            .loan-types-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-custom">
+        <!-- Header -->
+        <div class="page-header">
+            <h1><i class="fas fa-hand-holding-usd me-3"></i>Choose Your Loan Type</h1>
+            <p>Select the type of loan you need and fill out the application form</p>
+        </div>
+
+        <!-- Loan Types Grid -->
+        <div class="loan-types-grid">
+            <!-- Personal Loan -->
+            <a href="{% url 'loans:apply_personal_loan' %}" class="loan-card">
+                <div class="loan-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3>Personal Loan</h3>
+                <p>Quick funds for personal needs like weddings, medical expenses, or travel</p>
+                <span class="apply-btn">
+                    <i class="fas fa-arrow-right me-2"></i>Apply Now
+                </span>
+            </a>
+
+            <!-- Home Loan -->
+            <a href="{% url 'loans:apply_home_loan' %}" class="loan-card">
+                <div class="loan-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <h3>Home Loan</h3>
+                <p>Finance your dream home with competitive interest rates and flexible tenure</p>
+                <span class="apply-btn">
+                    <i class="fas fa-arrow-right me-2"></i>Apply Now
+                </span>
+            </a>
+
+            <!-- Education Loan -->
+            <a href="{% url 'loans:apply_education_loan' %}" class="loan-card">
+                <div class="loan-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3>Education Loan</h3>
+                <p>Invest in your future with education loans for higher studies and courses</p>
+                <span class="apply-btn">
+                    <i class="fas fa-arrow-right me-2"></i>Apply Now
+                </span>
+            </a>
+
+            <!-- Vehicle Loan -->
+            <a href="{% url 'loans:apply_vehicle_loan' %}" class="loan-card">
+                <div class="loan-icon">
+                    <i class="fas fa-car"></i>
+                </div>
+                <h3>Vehicle Loan</h3>
+                <p>Get your dream vehicle with easy financing options for cars and bikes</p>
+                <span class="apply-btn">
+                    <i class="fas fa-arrow-right me-2"></i>Apply Now
+                </span>
+            </a>
+        </div>
+
+        <!-- Back Button -->
+        <div class="back-link">
+            <a href="/user/dashboard/" class="btn-back">
+                <i class="fas fa-arrow-left"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

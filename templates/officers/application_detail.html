@@ -530,6 +530,149 @@
                 <p>{{ application.remarks }}</p>
             </div>
             {% endif %}
+
+            <!-- Loan-Specific Details Section -->
+            {% if application.extra_details %}
+            <div style="margin-top: 30px;">
+                <h2 class="card-title" style="margin-bottom: 20px;">
+                    <i class="fas fa-clipboard-list"></i>
+                    Loan-Specific Details
+                </h2>
+
+                <div class="detail-grid">
+                    {% if application.loan_type.name == "Personal Loan" %}
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Purpose</div>
+                            <div class="detail-value">{{ application.extra_details.purpose|default:"Not specified" }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Existing EMI</div>
+                            <div class="detail-value">{% if application.extra_details.existing_emi %}Yes{% else %}No{%
+                                endif %}</div>
+                        </div>
+                    </div>
+                    {% if application.extra_details.existing_emi %}
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-money-bill"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">EMI Amount</div>
+                            <div class="detail-value">₹{{ application.extra_details.emi_amount|default:"0" }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% elif application.loan_type.name == "Home Loan" %}
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Property Value</div>
+                            <div class="detail-value">₹{{ application.extra_details.property_value|default:"Not
+                                specified" }}</div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Down Payment</div>
+                            <div class="detail-value">₹{{ application.extra_details.down_payment|default:"Not specified"
+                                }}</div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Property Type</div>
+                            <div class="detail-value">{{ application.extra_details.property_type|default:"Not specified"
+                                }}</div>
+                        </div>
+                    </div>
+
+                    {% elif application.loan_type.name == "Education Loan" %}
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Course Name</div>
+                            <div class="detail-value">{{ application.extra_details.course_name|default:"Not specified"
+                                }}</div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">University</div>
+                            <div class="detail-value">{{ application.extra_details.university|default:"Not specified" }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Course Duration</div>
+                            <div class="detail-value">{{ application.extra_details.course_duration_months|default:"Not
+                                specified" }} months</div>
+                        </div>
+                    </div>
+
+                    {% elif application.loan_type.name == "Vehicle Loan" %}
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Vehicle Type</div>
+                            <div class="detail-value">{{ application.extra_details.vehicle_type|default:"Not specified"
+                                }}</div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-tag"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">On-Road Price</div>
+                            <div class="detail-value">₹{{ application.extra_details.on_road_price|default:"Not
+                                specified" }}</div>
+                        </div>
+                    </div>
+                    {% if application.extra_details.brand_model %}
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Brand & Model</div>
+                            <div class="detail-value">{{ application.extra_details.brand_model }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
         </div>
 
         <!-- Review Form or Alert -->
