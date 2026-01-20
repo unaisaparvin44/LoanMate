@@ -74,10 +74,17 @@
         .user-info {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 15px;
             margin-top: 15px;
             padding-top: 15px;
             border-top: 1px solid #e0e0e0;
+        }
+
+        .user-info-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         .user-avatar {
@@ -275,26 +282,24 @@
 
         /* Logout Button */
         .logout-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 25px;
-            background: rgba(255, 255, 255, 0.95);
-            color: #667eea;
-            border: 2px solid #667eea;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
             border-radius: 10px;
             text-decoration: none;
             font-weight: 600;
             font-size: 14px;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            white-space: nowrap;
         }
 
         .logout-btn:hover {
-            background: #667eea;
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
         }
 
         /* Responsive */
@@ -307,10 +312,18 @@
                 grid-template-columns: 1fr;
             }
 
+            .user-info {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .user-info-left {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
             .logout-btn {
-                position: static;
                 width: 100%;
-                margin-bottom: 20px;
                 text-align: center;
             }
         }
@@ -318,11 +331,6 @@
 </head>
 
 <body>
-    <!-- Logout Button -->
-    <a href="{% url 'accounts:login' %}" class="logout-btn">
-        <i class="fas fa-sign-out-alt me-2"></i>Logout
-    </a>
-
     <div class="dashboard-container">
         <!-- Header -->
         <div class="dashboard-header">
@@ -330,16 +338,22 @@
             <p>Review and manage loan applications</p>
 
             <div class="user-info">
-                <div class="user-avatar">
-                    {{ user.username|slice:":1"|upper }}
+                <div class="user-info-left">
+                    <div class="user-avatar">
+                        {{ user.username|slice:":1"|upper }}
+                    </div>
+                    <div class="user-details">
+                        <h5>
+                            {{ user.username }}
+                            <span class="badge-role">OFFICER</span>
+                        </h5>
+                        <p><i class="fas fa-envelope me-2"></i>{{ user.email|default:"No email provided" }}</p>
+                    </div>
                 </div>
-                <div class="user-details">
-                    <h5>
-                        {{ user.username }}
-                        <span class="badge-role">OFFICER</span>
-                    </h5>
-                    <p><i class="fas fa-envelope me-2"></i>{{ user.email|default:"No email provided" }}</p>
-                </div>
+                <!-- Logout Button -->
+                <a href="{% url 'accounts:login' %}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </a>
             </div>
         </div>
 
