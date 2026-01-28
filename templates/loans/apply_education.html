@@ -268,8 +268,7 @@
                             <label class="form-label">Course Duration (months) <span
                                     style="color: red;">*</span></label>
                             {{ form.course_duration_months }}
-                            {% if form.course_duration_months.errors %}{{ form.course_duration_months.errors }}{% endif
-                            %}
+                            {% if form.course_duration_months.errors %}{{ form.course_duration_months.errors }}{% endif %}
                             {% if form.course_duration_months.help_text %}<div class="form-text">{{
                                 form.course_duration_months.help_text }}</div>{% endif %}
                         </div>
