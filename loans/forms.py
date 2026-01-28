@@ -66,6 +66,25 @@ class PersonalLoanForm(BaseLoanApplicationForm):
         help_text="Current monthly EMI amount (if applicable)"
     )
 
+    def clean_loan_amount(self):
+        amount = self.cleaned_data.get('loan_amount')
+        MIN_LOAN_AMOUNT = 10000  # ₹10,000
+        MAX_PERSONAL_LOAN = 500000  # ₹5,00,000
+        
+        if amount is not None:
+            if amount <= 0:
+                raise forms.ValidationError("Loan amount must be greater than zero.")
+            if amount < MIN_LOAN_AMOUNT:
+                raise forms.ValidationError(
+                    f"Personal loan amount must be at least ₹10,000. You requested ₹{amount:,}."
+                )
+            if amount > MAX_PERSONAL_LOAN:
+                raise forms.ValidationError(
+                    f"Personal loan amount cannot exceed ₹5,00,000. You requested ₹{amount:,}. "
+                    f"Please reduce your loan amount by ₹{amount - MAX_PERSONAL_LOAN:,}."
+                )
+        return amount
+
     def clean(self):
         cleaned_data = super().clean()
         existing_emi = cleaned_data.get('existing_emi')
@@ -101,6 +120,25 @@ class HomeLoanForm(BaseLoanApplicationForm):
         widget=forms.Select(attrs={'class': 'form-select'})
     )
 
+    def clean_loan_amount(self):
+        amount = self.cleaned_data.get('loan_amount')
+        MIN_LOAN_AMOUNT = 10000  # ₹10,000
+        MAX_HOME_LOAN = 10000000  # ₹1,00,00,000 (1 Crore)
+        
+        if amount is not None:
+            if amount <= 0:
+                raise forms.ValidationError("Loan amount must be greater than zero.")
+            if amount < MIN_LOAN_AMOUNT:
+                raise forms.ValidationError(
+                    f"Home loan amount must be at least ₹10,000. You requested ₹{amount:,}."
+                )
+            if amount > MAX_HOME_LOAN:
+                raise forms.ValidationError(
+                    f"Home loan amount cannot exceed ₹1,00,00,000. You requested ₹{amount:,}. "
+                    f"Please reduce your loan amount by ₹{amount - MAX_HOME_LOAN:,}."
+                )
+        return amount
+
     def clean(self):
         cleaned_data = super().clean()
         property_value = cleaned_data.get('property_value')
@@ -131,6 +169,25 @@ class EducationLoanForm(BaseLoanApplicationForm):
         help_text="Course duration in months"
     )
 
+    def clean_loan_amount(self):
+        amount = self.cleaned_data.get('loan_amount')
+        MIN_LOAN_AMOUNT = 10000  # ₹10,000
+        MAX_EDUCATION_LOAN = 2000000  # ₹20,00,000 (20 Lakhs)
+        
+        if amount is not None:
+            if amount <= 0:
+                raise forms.ValidationError("Loan amount must be greater than zero.")
+            if amount < MIN_LOAN_AMOUNT:
+                raise forms.ValidationError(
+                    f"Education loan amount must be at least ₹10,000. You requested ₹{amount:,}."
+                )
+            if amount > MAX_EDUCATION_LOAN:
+                raise forms.ValidationError(
+                    f"Education loan amount cannot exceed ₹20,00,000. You requested ₹{amount:,}. "
+                    f"Please reduce your loan amount by ₹{amount - MAX_EDUCATION_LOAN:,}."
+                )
+        return amount
+
 
 class VehicleLoanForm(BaseLoanApplicationForm):
     """Form for Vehicle Loan with specific fields"""
@@ -155,6 +212,25 @@ class VehicleLoanForm(BaseLoanApplicationForm):
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Honda City, Royal Enfield Classic'}),
         help_text="Vehicle brand and model (optional)"
     )
+
+    def clean_loan_amount(self):
+        amount = self.cleaned_data.get('loan_amount')
+        MIN_LOAN_AMOUNT = 10000  # ₹10,000
+        MAX_VEHICLE_LOAN = 1500000  # ₹15,00,000 (15 Lakhs)
+        
+        if amount is not None:
+            if amount <= 0:
+                raise forms.ValidationError("Loan amount must be greater than zero.")
+            if amount < MIN_LOAN_AMOUNT:
+                raise forms.ValidationError(
+                    f"Vehicle loan amount must be at least ₹10,000. You requested ₹{amount:,}."
+                )
+            if amount > MAX_VEHICLE_LOAN:
+                raise forms.ValidationError(
+                    f"Vehicle loan amount cannot exceed ₹15,00,000. You requested ₹{amount:,}. "
+                    f"Please reduce your loan amount by ₹{amount - MAX_VEHICLE_LOAN:,}."
+                )
+        return amount
 
 
 # Keep the old form for backward compatibility if needed
