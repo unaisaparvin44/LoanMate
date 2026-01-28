@@ -571,7 +571,6 @@
                             <div class="detail-value">₹{{ application.extra_details.emi_amount|default:"0" }}</div>
                         </div>
                     </div>
-                    {% endif %}
 
                     {% elif application.loan_type.name == "Home Loan" %}
                     <div class="detail-item">
@@ -668,6 +667,8 @@
                             <div class="detail-value">{{ application.extra_details.brand_model }}</div>
                         </div>
                     </div>
+                    {% endif %}
+                    {% endif %}
                     {% endif %}
                     {% endif %}
                 </div>
