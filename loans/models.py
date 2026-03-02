@@ -41,6 +41,13 @@ class LoanApplication(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     remarks = models.TextField(blank=True, default="")
     reviewed_at = models.DateTimeField(null=True, blank=True)
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='reviewed_applications',
+    )
     extra_details = models.JSONField(default=dict, blank=True, null=True)
 
     def __str__(self):
