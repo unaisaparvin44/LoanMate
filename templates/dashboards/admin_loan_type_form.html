@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ action }} Loan Type | LoanMate Admin</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/ui_polish.css' %}">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container-custom {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .page-header h1 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .breadcrumb-item a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-control,
+        .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #667eea;
+            cursor: pointer;
+        }
+
+        .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+
+        .form-check-label {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-cancel {
+            padding: 12px 30px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-cancel:hover {
+            background: #5a6268;
+            color: white;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        /* =============================================
+           UI POLISH: Icon Breadcrumb
+           ============================================= */
+        .ui-breadcrumb .breadcrumb { background: none; padding: 0; margin: 8px 0 0; font-size: 13px; }
+        .ui-breadcrumb .breadcrumb-item a { color: #667eea; text-decoration: none; font-weight: 500; transition: color 0.2s ease; }
+        .ui-breadcrumb .breadcrumb-item a:hover { color: #764ba2; }
+        .ui-breadcrumb .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+        .ui-breadcrumb .breadcrumb-item i { margin-right: 4px; font-size: 12px; opacity: 0.8; }
+        .ui-breadcrumb .breadcrumb-item.active { color: #555; font-weight: 500; }
+
+        /* =============================================
+           UI POLISH: Button Glow + Press
+           ============================================= */
+        .btn-submit { transition: all 0.25s ease !important; }
+        .btn-submit:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 10px 28px rgba(17, 153, 142, 0.45) !important;
+            filter: brightness(1.08);
+        }
+        .btn-submit:active { transform: scale(0.97) !important; }
+
+        .btn-cancel { transition: all 0.25s ease !important; }
+        .btn-cancel:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2) !important;
+        }
+        .btn-cancel:active { transform: scale(0.97) !important; }
+
+        /* =============================================
+           UI POLISH: Form Focus Glow
+           ============================================= */
+        .content-card {
+            transition: box-shadow 0.3s ease;
+        }
+        .content-card:hover {
+            box-shadow: 0 16px 48px rgba(102, 126, 234, 0.18) !important;
+        }
+
+        /* =============================================
+           UI POLISH: Typography
+           ============================================= */
+        body { -webkit-font-smoothing: antialiased; }
+        h1, h2, h3 { letter-spacing: -0.3px; }
+        p { line-height: 1.7; }
+    </style>
+</head>
+
+<body>
+    <div class="container-custom">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1><i class="fas fa-edit me-3"></i>{{ action }} Loan Type</h1>
+            <nav aria-label="breadcrumb" class="ui-breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'admin_loan_types' %}"><i class="fas fa-list-alt"></i> Loan Types</a></li>
+                    <li class="breadcrumb-item active"><i class="fas fa-edit"></i> {{ action }}</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- Form Card -->
+        <div class="content-card">
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-4">
+                    <label for="name" class="form-label">
+                        <i class="fas fa-tag me-2"></i>Loan Type Name *
+                    </label>
+                    <input type="text" class="form-control" id="name" name="name" 
+                           value="{% if loan_type %}{{ loan_type.name }}{% endif %}" 
+                           required placeholder="e.g., Personal Loan, Home Loan">
+                </div>
+
+                <div class="mb-4">
+                    <label for="description" class="form-label">
+                        <i class="fas fa-align-left me-2"></i>Description
+                    </label>
+                    <textarea class="form-control" id="description" name="description" 
+                              rows="4" placeholder="Enter loan type description (optional)">{% if loan_type %}{{ loan_type.description }}{% endif %}</textarea>
+                </div>
+
+                <div class="mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                               {% if not loan_type or loan_type.is_active %}checked{% endif %}>
+                        <label class="form-check-label" for="is_active">
+                            <i class="fas fa-check-circle me-2"></i>Active (Available for loan applications)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-save me-2"></i>{{ action }} Loan Type
+                    </button>
+                    <a href="{% url 'admin_loan_types' %}" class="btn-cancel">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
