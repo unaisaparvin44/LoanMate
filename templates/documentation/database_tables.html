@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LoanMate – Database Tables</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      background: #ffffff;
+      color: #000000;
+      padding: 60px 80px;
+    }
+
+    .page-title {
+      font-size: 26px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 50px;
+      letter-spacing: 1px;
+    }
+
+    .table-block {
+      margin-bottom: 45px;
+    }
+
+    .table-label {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+
+    th, td {
+      border: 1px solid #000;
+      padding: 6px 11px;
+      text-align: left;
+    }
+
+    thead th {
+      font-weight: bold;
+      background: #ffffff;
+    }
+
+    @media print {
+      body { padding: 30px 40px; }
+      .table-block { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-title">DATABASE TABLES – LOANMATE</div>
+
+  <!-- 1. AUTH_USER -->
+  <div class="table-block">
+    <div class="table-label">TABLE – AUTH_USER</div>
+    <table>
+      <thead><tr><th>FIELD NAME</th><th>DATA TYPE</th><th>DESCRIPTION</th></tr></thead>
+      <tbody>
+        <tr><td>id</td>           <td>INTEGER (PRIMARY KEY)</td> <td>PRIMARY KEY, AUTO INCREMENT</td></tr>
+        <tr><td>username</td>     <td>STRING (UNIQUE)</td>       <td>UNIQUE, NOT NULL</td></tr>
+        <tr><td>email</td>        <td>STRING</td>                <td>NOT NULL</td></tr>
+        <tr><td>password</td>     <td>STRING</td>                <td>NOT NULL (Hashed – PBKDF2-SHA256)</td></tr>
+        <tr><td>first_name</td>   <td>STRING</td>                <td>NOT NULL</td></tr>
+        <tr><td>last_name</td>    <td>STRING</td>                <td>NOT NULL</td></tr>
+        <tr><td>is_staff</td>     <td>BOOLEAN</td>               <td>DEFAULT FALSE, NOT NULL</td></tr>
+        <tr><td>is_active</td>    <td>BOOLEAN</td>               <td>DEFAULT TRUE, NOT NULL</td></tr>
+        <tr><td>is_superuser</td> <td>BOOLEAN</td>               <td>DEFAULT FALSE, NOT NULL</td></tr>
+        <tr><td>date_joined</td>  <td>DATETIME</td>              <td>DEFAULT (current timestamp), NOT NULL</td></tr>
+        <tr><td>last_login</td>   <td>DATETIME</td>              <td>NULL ALLOWED</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 2. AUTH_GROUP -->
+  <div class="table-block">
+    <div class="table-label">TABLE – AUTH_GROUP</div>
+    <table>
+      <thead><tr><th>FIELD NAME</th><th>DATA TYPE</th><th>DESCRIPTION</th></tr></thead>
+      <tbody>
+        <tr><td>id</td>   <td>INTEGER (PRIMARY KEY)</td> <td>PRIMARY KEY, AUTO INCREMENT</td></tr>
+        <tr><td>name</td> <td>STRING (UNIQUE)</td>       <td>UNIQUE, NOT NULL (e.g. 'Admins', 'Officers')</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3. AUTH_PERMISSION -->
+  <div class="table-block">
+    <div class="table-label">TABLE – AUTH_PERMISSION</div>
+    <table>
+      <thead><tr><th>FIELD NAME</th><th>DATA TYPE</th><th>DESCRIPTION</th></tr></thead>
+      <tbody>
+        <tr><td>id</td>              <td>INTEGER (PRIMARY KEY)</td> <td>PRIMARY KEY, AUTO INCREMENT</td></tr>
+        <tr><td>name</td>            <td>STRING</td>                <td>NOT NULL (Human-readable permission name)</td></tr>
+        <tr><td>content_type_id</td> <td>INTEGER (FOREIGN KEY)</td> <td>REFERENCES django_content_type(id), NOT NULL</td></tr>
+        <tr><td>codename</td>        <td>STRING</td>                <td>NOT NULL (e.g. 'add_user', 'change_user')</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 4. AUTH_GROUP_PERMISSIONS -->
+  <div class="table-block">
+    <div class="table-label">TABLE – AUTH_GROUP_PERMISSIONS</div>
+    <table>
+      <thead><tr><th>FIELD NAME</th><th>DATA TYPE</th><th>DESCRIPTION</th></tr></thead>
+      <tbody>
+        <tr><td>id</td>            <td>INTEGER (PRIMARY KEY)</td> <td>PRIMARY KEY, AUTO INCREMENT</td></tr>
+        <tr><td>group_id</td>      <td>INTEGER (FOREIGN KEY)</td> <td>REFERENCES auth_group(id), NOT NULL</td></tr>
+        <tr><td>permission_id</td> <td>INTEGER (FOREIGN KEY)</td> <td>REFERENCES auth_permission(id), NOT NULL</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 5. AUTH_USER_GROUPS -->
+  <div class="table-block">
+    <div class="table-label">TABLE – AUTH_USER_GROUPS</div>
+    <table>
+      <thead><tr><th>FIELD NAME</th><th>DATA TYPE</th><th>DESCRIPTION</th></tr></thead>
+      <tbody>
+        <tr><td>id</td>       <td>INTEGER (PRIMARY KEY)</td> <td>PRIMARY KEY, AUTO INCREMENT</td></tr>
+        <tr><td>user_id</td>  <td>INTEGER (FOREIGN KEY)</td> <td>REFERENCES auth_user(id), NOT NULL</td></tr>
+        <tr><td>group_id</td> <td>INTEGER (FOREIGN KEY)</td> <td>REFERENCES auth_group(id), NOT NULL</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 6. AUTH_USER_USER_PERMISSIONS -->
+  <div class="table-block">
+    <div class="table-label">TABLE – AUTH_USER_USER_PERMISSIONS</div>
+    <table>
+      <thead><tr><th>FIELD NAME</th><th>DATA TYPE</th><th>DESCRIPTION</th></tr></thead>
+      <tbody>
+        <tr><td>id</td>            <td>INTEGER (PRIMARY KEY)</td> <td>PRIMARY KEY, AUTO INCREMENT</td></tr>
+        <tr><td>user_id</td>       <td>INTEGER (FOREIGN KEY)</td> <td>REFERENCES auth_user(id), NOT NULL</td></tr>
+        <tr><td>permission_id</td> <td>INTEGER (FOREIGN KEY)</td> <td>REFERENCES auth_permission(id), NOT NULL</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 7. DJANGO_CONTENT_TYPE -->
+  <div class="table-block">
+    <div class="table-label">TABLE – DJANGO_CONTENT_TYPE</div>
+    <table>
+      <thead><tr><th>FIELD NAME</th><th>DATA TYPE</th><th>DESCRIPTION</th></tr></thead>
+      <tbody>
+        <tr><td>id</td>        <td>INTEGER (PRIMARY KEY)</td> <td>PRIMARY KEY, AUTO INCREMENT</td></tr>
+        <tr><td>app_label</td> <td>STRING</td>                <td>NOT NULL (Django app name, e.g. 'loans')</td></tr>
+        <tr><td>model</td>     <td>STRING</td>                <td>NOT NULL (Model name, e.g. 'loanapplication')</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 8. DJANGO_ADMIN_LOG -->
+  <div class="table-block">
+    <div class="table-label">TABLE – DJANGO_ADMIN_LOG</div>
+    <table>
+      <thead><tr><th>FIELD NAME</th><th>DATA TYPE</th><th>DESCRIPTION</th></tr></thead>
+      <tbody>
+        <tr><td>id</td>              <td>INTEGER (PRIMARY KEY)</td> <td>PRIMARY KEY, AUTO INCREMENT</td></tr>
+        <tr><td>action_time</td>     <td>DATETIME</td>              <td>NOT NULL (Timestamp of the admin action)</td></tr>
+        <tr><td>object_id</td>       <td>TEXT</td>                  <td>NULL ALLOWED (PK of the affected object)</td></tr>
+        <tr><td>object_repr</td>     <td>STRING</td>                <td>NOT NULL (String representation of object)</td></tr>
+        <tr><td>action_flag</td>     <td>INTEGER</td>               <td>NOT NULL (1=Addition, 2=Change, 3=Deletion)</td></tr>
+        <tr><td>change_message</td>  <td>TEXT</td>                  <td>NOT NULL (JSON description of changes)</td></tr>
+        <tr><td>content_type_id</td> <td>INTEGER (FOREIGN KEY)</td> <td>REFERENCES django_content_type(id), NULL ALLOWED</td></tr>
+        <tr><td>user_id</td>         <td>INTEGER (FOREIGN KEY)</td> <td>REFERENCES auth_user(id), NOT NULL, ON DELETE CASCADE</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 9. DJANGO_MIGRATIONS -->
+  <div class="table-block">
+    <div class="table-label">TABLE – DJANGO_MIGRATIONS</div>
+    <table>
+      <thead><tr><th>FIELD NAME</th><th>DATA TYPE</th><th>DESCRIPTION</th></tr></thead>
+      <tbody>
+        <tr><td>id</td>      <td>INTEGER (PRIMARY KEY)</td> <td>PRIMARY KEY, AUTO INCREMENT</td></tr>
+        <tr><td>app</td>     <td>STRING</td>                <td>NOT NULL (App name e.g. 'loans', 'accounts')</td></tr>
+        <tr><td>name</td>    <td>STRING</td>                <td>NOT NULL (Migration file name)</td></tr>
+        <tr><td>applied</td> <td>DATETIME</td>              <td>NOT NULL (Timestamp when migration was applied)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 10. DJANGO_SESSION -->
+  <div class="table-block">
+    <div class="table-label">TABLE – DJANGO_SESSION</div>
+    <table>
+      <thead><tr><th>FIELD NAME</th><th>DATA TYPE</th><th>DESCRIPTION</th></tr></thead>
+      <tbody>
+        <tr><td>session_key</td>  <td>STRING (PRIMARY KEY)</td> <td>PRIMARY KEY, UNIQUE session identifier</td></tr>
+        <tr><td>session_data</td> <td>TEXT</td>                 <td>NOT NULL (Encoded session data)</td></tr>
+        <tr><td>expire_date</td>  <td>DATETIME</td>             <td>NOT NULL, INDEXED (Session expiry timestamp)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 11. ACCOUNTS_USERPROFILE -->
+  <div class="table-block">
+    <div class="table-label">TABLE – ACCOUNTS_USERPROFILE</div>
+    <table>
+      <thead><tr><th>FIELD NAME</th><th>DATA TYPE</th><th>DESCRIPTION</th></tr></thead>
+      <tbody>
+        <tr><td>id</td>              <td>INTEGER (PRIMARY KEY)</td> <td>PRIMARY KEY, AUTO INCREMENT</td></tr>
+        <tr><td>user_id</td>         <td>INTEGER (FOREIGN KEY)</td> <td>REFERENCES auth_user(id), UNIQUE, NOT NULL, ON DELETE CASCADE</td></tr>
+        <tr><td>role</td>            <td>STRING</td>                <td>DEFAULT 'user', NOT NULL ('user' or 'officer')</td></tr>
+        <tr><td>phone_number</td>    <td>STRING</td>                <td>NULL ALLOWED</td></tr>
+        <tr><td>address</td>         <td>TEXT</td>                  <td>NULL ALLOWED</td></tr>
+        <tr><td>employment_type</td> <td>STRING</td>                <td>NULL ALLOWED</td></tr>
+        <tr><td>monthly_income</td>  <td>INTEGER</td>               <td>NULL ALLOWED, POSITIVE</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 12. LOANS_LOANTYPE -->
+  <div class="table-block">
+    <div class="table-label">TABLE – LOANS_LOANTYPE</div>
+    <table>
+      <thead><tr><th>FIELD NAME</th><th>DATA TYPE</th><th>DESCRIPTION</th></tr></thead>
+      <tbody>
+        <tr><td>id</td>          <td>INTEGER (PRIMARY KEY)</td> <td>PRIMARY KEY, AUTO INCREMENT</td></tr>
+        <tr><td>name</td>        <td>STRING (UNIQUE)</td>       <td>UNIQUE, NOT NULL</td></tr>
+        <tr><td>description</td> <td>TEXT</td>                  <td>NULL ALLOWED</td></tr>
+        <tr><td>is_active</td>   <td>BOOLEAN</td>               <td>DEFAULT TRUE, NOT NULL</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 13. LOANS_LOANAPPLICATION -->
+  <div class="table-block">
+    <div class="table-label">TABLE – LOANS_LOANAPPLICATION</div>
+    <table>
+      <thead><tr><th>FIELD NAME</th><th>DATA TYPE</th><th>DESCRIPTION</th></tr></thead>
+      <tbody>
+        <tr><td>id</td>              <td>INTEGER (PRIMARY KEY)</td> <td>PRIMARY KEY, AUTO INCREMENT</td></tr>
+        <tr><td>user_id</td>         <td>INTEGER (FOREIGN KEY)</td> <td>REFERENCES auth_user(id), NOT NULL, ON DELETE CASCADE</td></tr>
+        <tr><td>loan_type_id</td>    <td>INTEGER (FOREIGN KEY)</td> <td>REFERENCES loans_loantype(id), NOT NULL, ON DELETE PROTECT</td></tr>
+        <tr><td>income</td>          <td>INTEGER</td>               <td>NOT NULL, POSITIVE</td></tr>
+        <tr><td>employment_type</td> <td>STRING</td>                <td>NOT NULL</td></tr>
+        <tr><td>credit_score</td>    <td>INTEGER</td>               <td>NOT NULL, POSITIVE</td></tr>
+        <tr><td>loan_amount</td>     <td>INTEGER</td>               <td>NOT NULL, POSITIVE</td></tr>
+        <tr><td>loan_tenure</td>     <td>INTEGER</td>               <td>NOT NULL, POSITIVE (duration in months)</td></tr>
+        <tr><td>status</td>          <td>STRING</td>                <td>DEFAULT 'PENDING', NOT NULL ('PENDING' / 'APPROVED' / 'REJECTED')</td></tr>
+        <tr><td>remarks</td>         <td>TEXT</td>                  <td>DEFAULT '', NOT NULL</td></tr>
+        <tr><td>extra_details</td>   <td>JSON</td>                  <td>DEFAULT {}, NULL ALLOWED (ML prediction data)</td></tr>
+        <tr><td>created_at</td>      <td>DATETIME</td>              <td>DEFAULT (auto on insert), NOT NULL</td></tr>
+        <tr><td>reviewed_at</td>     <td>DATETIME</td>              <td>NULL ALLOWED</td></tr>
+        <tr><td>reviewed_by_id</td>  <td>INTEGER (FOREIGN KEY)</td> <td>REFERENCES auth_user(id), NULL ALLOWED, ON DELETE SET NULL</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>
