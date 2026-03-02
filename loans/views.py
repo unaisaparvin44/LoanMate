@@ -9,6 +9,7 @@ from .forms import (
     VehicleLoanForm
 )
 from .models import LoanApplication, LoanType
+from ml_engine.predictor import predict as ml_predict
 
 
 @login_required
@@ -52,7 +53,16 @@ def apply_personal_loan(request):
                 messages.error(request, 'Personal Loan type is not available. Please contact support.')
                 return render(request, 'loans/apply_personal.html', {'form': form})
     else:
-        form = PersonalLoanForm()
+        # Auto-prefill from UserProfile if available
+        initial = {}
+        if hasattr(request.user, 'userprofile'):
+            profile = request.user.userprofile
+            if profile.employment_type:
+                initial['employment_type'] = profile.employment_type
+            if profile.monthly_income:
+                initial['income'] = profile.monthly_income
+        
+        form = PersonalLoanForm(initial=initial) if initial else PersonalLoanForm()
     
     return render(request, 'loans/apply_personal.html', {'form': form})
 
@@ -92,7 +102,16 @@ def apply_home_loan(request):
                 messages.error(request, 'Home Loan type is not available. Please contact support.')
                 return render(request, 'loans/apply_home.html', {'form': form})
     else:
-        form = HomeLoanForm()
+        # Auto-prefill from UserProfile if available
+        initial = {}
+        if hasattr(request.user, 'userprofile'):
+            profile = request.user.userprofile
+            if profile.employment_type:
+                initial['employment_type'] = profile.employment_type
+            if profile.monthly_income:
+                initial['income'] = profile.monthly_income
+        
+        form = HomeLoanForm(initial=initial) if initial else HomeLoanForm()
     
     return render(request, 'loans/apply_home.html', {'form': form})
 
@@ -132,7 +151,16 @@ def apply_education_loan(request):
                 messages.error(request, 'Education Loan type is not available. Please contact support.')
                 return render(request, 'loans/apply_education.html', {'form': form})
     else:
-        form = EducationLoanForm()
+        # Auto-prefill from UserProfile if available
+        initial = {}
+        if hasattr(request.user, 'userprofile'):
+            profile = request.user.userprofile
+            if profile.employment_type:
+                initial['employment_type'] = profile.employment_type
+            if profile.monthly_income:
+                initial['income'] = profile.monthly_income
+        
+        form = EducationLoanForm(initial=initial) if initial else EducationLoanForm()
     
     return render(request, 'loans/apply_education.html', {'form': form})
 
@@ -172,7 +200,16 @@ def apply_vehicle_loan(request):
                 messages.error(request, 'Vehicle Loan type is not available. Please contact support.')
                 return render(request, 'loans/apply_vehicle.html', {'form': form})
     else:
-        form = VehicleLoanForm()
+        # Auto-prefill from UserProfile if available
+        initial = {}
+        if hasattr(request.user, 'userprofile'):
+            profile = request.user.userprofile
+            if profile.employment_type:
+                initial['employment_type'] = profile.employment_type
+            if profile.monthly_income:
+                initial['income'] = profile.monthly_income
+        
+        form = VehicleLoanForm(initial=initial) if initial else VehicleLoanForm()
     
     return render(request, 'loans/apply_vehicle.html', {'form': form})
 
@@ -188,4 +225,29 @@ def apply_loan(request):
 def my_applications(request):
     applications = LoanApplication.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'loans/my_applications.html', {'applications': applications})
+
+
+@login_required
+def application_detail_user(request, pk):
+    """View for users to see their own application details"""
+    from django.shortcuts import get_object_or_404
+
+    # Get the application and ensure it belongs to the current user
+    application = get_object_or_404(LoanApplication, pk=pk, user=request.user)
+
+    # Format extra_details keys in the view (not the template)
+    # Converts 'loan_purpose' → 'Loan Purpose' ready for display
+    formatted_extra_details = [
+        (key.replace('_', ' ').title(), value)
+        for key, value in (application.extra_details or {}).items()
+    ]
+
+    context = {
+        'application': application,
+        'formatted_extra_details': formatted_extra_details,
+        'ml_prediction': ml_predict(application),
+    }
+
+    return render(request, 'loans/application_detail_user.html', context)
+
 
