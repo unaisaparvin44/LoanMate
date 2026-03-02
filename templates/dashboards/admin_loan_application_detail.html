@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Detail | LoanMate Admin</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/ui_polish.css' %}">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container-custom {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .page-header h1 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .breadcrumb-item a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .detail-section {
+            margin-bottom: 30px;
+        }
+
+        .detail-section h5 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .detail-row {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #666;
+            width: 200px;
+            flex-shrink: 0;
+        }
+
+        .detail-value {
+            color: #333;
+            flex: 1;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .badge-pending {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .badge-approved {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .badge-rejected {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .btn-back {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #1e3c72;
+            border: 2px solid #1e3c72;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            background: #1e3c72;
+            color: white;
+        }
+
+        .extra-details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .extra-details pre {
+            margin: 0;
+            font-size: 13px;
+            color: #333;
+        }
+        /* =============================================
+           UI POLISH: Icon Breadcrumb
+           ============================================= */
+        .ui-breadcrumb .breadcrumb { background: none; padding: 0; margin: 8px 0 0; font-size: 13px; }
+        .ui-breadcrumb .breadcrumb-item a { color: #667eea; text-decoration: none; font-weight: 500; transition: color 0.2s ease; }
+        .ui-breadcrumb .breadcrumb-item a:hover { color: #764ba2; }
+        .ui-breadcrumb .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+        .ui-breadcrumb .breadcrumb-item i { margin-right: 4px; font-size: 12px; opacity: 0.8; }
+        .ui-breadcrumb .breadcrumb-item.active { color: #555; font-weight: 500; }
+
+        /* =============================================
+           UI POLISH: Section Divider Headers
+           ============================================= */
+        .section-divider {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 22px; margin-top: 4px;
+        }
+        .section-divider .sd-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; width: 34px; height: 34px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; flex-shrink: 0;
+        }
+        .section-divider .sd-title {
+            font-size: 17px; font-weight: 700; color: #2d3748; flex: 1;
+            padding-bottom: 10px;
+            border-bottom: 2px solid transparent;
+            background: linear-gradient(135deg, #667eea, #764ba2) bottom / 100% 2px no-repeat;
+        }
+
+        /* =============================================
+           UI POLISH: Back Button Polish
+           ============================================= */
+        .back-btn, .btn-back {
+            transition: all 0.25s ease !important;
+        }
+        .back-btn:hover, .btn-back:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 22px rgba(102, 126, 234, 0.4) !important;
+            filter: brightness(1.08);
+        }
+        .back-btn:active, .btn-back:active { transform: scale(0.96) !important; }
+
+        /* =============================================
+           UI POLISH: Typography
+           ============================================= */
+        body { -webkit-font-smoothing: antialiased; }
+        h1, h2, h3, h5, h6 { letter-spacing: -0.3px; }
+        p { line-height: 1.7; }
+    </style>
+</head>
+
+<body>
+    <div class="container-custom">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1><i class="fas fa-file-alt me-3"></i>Loan Application Detail</h1>
+            <nav aria-label="breadcrumb" class="ui-breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'admin_loan_applications' %}"><i class="fas fa-file-invoice-dollar"></i> Applications</a></li>
+                    <li class="breadcrumb-item active"><i class="fas fa-file-alt"></i> Application #{{ application.id }}</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- Application Details -->
+        <div class="content-card">
+            <div class="detail-section">
+                <h5><i class="fas fa-info-circle me-2"></i>Application Information</h5>
+                <div class="detail-row">
+                    <div class="detail-label">Application ID:</div>
+                    <div class="detail-value"><strong>#{{ application.id }}</strong></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Status:</div>
+                    <div class="detail-value">
+                        <span class="badge badge-{{ application.status|lower }}">
+                            {{ application.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Loan Type:</div>
+                    <div class="detail-value">{{ application.loan_type.name }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Loan Amount:</div>
+                    <div class="detail-value"><strong>₹{{ application.loan_amount|floatformat:0 }}</strong></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Loan Tenure:</div>
+                    <div class="detail-value">{{ application.loan_tenure }} months</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Created At:</div>
+                    <div class="detail-value">{{ application.created_at|date:"F d, Y - h:i A" }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Reviewed At:</div>
+                    <div class="detail-value">
+                        {% if application.reviewed_at %}
+                        {{ application.reviewed_at|date:"F d, Y - h:i A" }}
+                        {% else %}
+                        <span class="text-muted">Not yet reviewed</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h5><i class="fas fa-user me-2"></i>Applicant Information</h5>
+                <div class="detail-row">
+                    <div class="detail-label">Username:</div>
+                    <div class="detail-value">{{ application.user.username }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Email:</div>
+                    <div class="detail-value">{{ application.user.email|default:"Not provided" }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Income:</div>
+                    <div class="detail-value">₹{{ application.income|floatformat:0 }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Employment Type:</div>
+                    <div class="detail-value">{{ application.employment_type }}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Credit Score:</div>
+                    <div class="detail-value">{{ application.credit_score }}</div>
+                </div>
+            </div>
+
+            {% if application.extra_details %}
+            <div class="detail-section">
+                <h5><i class="fas fa-list-ul me-2"></i>Loan-Specific Details</h5>
+                <div class="extra-details">
+                    <pre>{{ application.extra_details|pprint }}</pre>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if application.remarks %}
+            <div class="detail-section">
+                <h5><i class="fas fa-comment me-2"></i>Officer Remarks</h5>
+                <div class="detail-row">
+                    <div class="detail-value">{{ application.remarks }}</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Back Button -->
+            <div class="mt-4">
+                <a href="{% url 'admin_loan_applications' %}" class="btn-back">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Applications
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
