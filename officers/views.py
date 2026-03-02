@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from accounts.decorators import role_required
 from loans.models import LoanApplication
+from ml_engine.predictor import predict as ml_predict
 
 
 @role_required("officer")
@@ -32,12 +33,14 @@ def officer_application_detail(request, pk):
             application.status = status
             application.remarks = remarks
             application.reviewed_at = timezone.now()
+            application.reviewed_by = request.user
             application.save()
             
             return redirect('officers:application_list')
     
     context = {
-        'application': application
+        'application': application,
+        'ml_prediction': ml_predict(application),
     }
     return render(request, 'officers/application_detail.html', context)
 
