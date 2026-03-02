@@ -1,0 +1,13 @@
+loan_type,income,employment,amount,status,reviewed_by,created_at,reviewed_at
+Personal Loan,5000,Manager,50000,Approved,,2026-01-09,2026-01-12
+Personal Loan,20000,teacher,300000,Approved,,2026-01-13,2026-01-14
+Personal Loan,10000,Manager,20000,Approved,,2026-01-14,2026-01-20
+Personal Loan,2000,teacher,20000,Pending,,2026-01-27,
+Personal Loan,20000,teacher,60000,Approved,,2026-01-31,2026-01-31
+Home Loan,10000,teacher,30000,Approved,,2026-01-13,2026-02-19
+Home Loan,10000,teacher,30000,Rejected,,2026-01-13,2026-01-13
+Home Loan,200000,Manager,30000,Approved,,2026-01-14,2026-01-14
+Home Loan,200000,Manager,10000,Approved,,2026-01-15,2026-01-15
+Home Loan,2000000,teacher,3,Pending,,2026-01-27,
+Home Loan,20000,teacher,22000,Pending,,2026-02-19,
+Education Loan,100000,teacher,200000,Pending,,2026-01-13,
