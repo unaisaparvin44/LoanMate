@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Types Management | LoanMate Admin</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/ui_polish.css' %}">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container-custom {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .page-header h1 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .breadcrumb-item a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        table {
+            margin-bottom: 0;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        thead th {
+            border: none;
+            font-weight: 600;
+            padding: 15px;
+        }
+
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        tbody td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .badge-active {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-inactive {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-back {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #1e3c72;
+            border: 2px solid #1e3c72;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            background: #1e3c72;
+            color: white;
+        }
+
+        .btn-create {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-create:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .btn-edit {
+            padding: 6px 15px;
+            background: #667eea;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            margin-right: 5px;
+        }
+
+        .btn-edit:hover {
+            background: #5568d3;
+            color: white;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #28a745;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        /* =============================================
+           UI POLISH: Icon Breadcrumb
+           ============================================= */
+        .ui-breadcrumb .breadcrumb { background: none; padding: 0; margin: 8px 0 0; font-size: 13px; }
+        .ui-breadcrumb .breadcrumb-item a { color: #667eea; text-decoration: none; font-weight: 500; transition: color 0.2s ease; }
+        .ui-breadcrumb .breadcrumb-item a:hover { color: #764ba2; }
+        .ui-breadcrumb .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+        .ui-breadcrumb .breadcrumb-item i { margin-right: 4px; font-size: 12px; opacity: 0.8; }
+        .ui-breadcrumb .breadcrumb-item.active { color: #555; font-weight: 500; }
+
+        /* =============================================
+           UI POLISH: Button Glow + Press
+           ============================================= */
+        .btn-create { transition: all 0.25s ease !important; }
+        .btn-create:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 10px 28px rgba(102, 126, 234, 0.45) !important;
+            filter: brightness(1.08);
+        }
+        .btn-create:active { transform: scale(0.97) !important; }
+
+        .btn-edit, .btn-toggle { transition: all 0.22s ease !important; }
+        .btn-edit:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 18px rgba(102, 126, 234, 0.35) !important;
+        }
+        .btn-edit:active, .btn-toggle:active { transform: scale(0.96) !important; }
+
+        /* =============================================
+           UI POLISH: Typography
+           ============================================= */
+        body { -webkit-font-smoothing: antialiased; }
+        h1, h2, h3 { letter-spacing: -0.3px; }
+        p { line-height: 1.7; }
+    </style>
+</head>
+
+<body>
+    <div class="container-custom">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1><i class="fas fa-list-alt me-3"></i>Loan Types Management</h1>
+            <nav aria-label="breadcrumb" class="ui-breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'admin_dashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li class="breadcrumb-item active"><i class="fas fa-list-alt"></i> Loan Types</li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- Content Card -->
+        <div class="content-card">
+            <!-- Header Actions -->
+            <div class="header-actions">
+                <h5 class="mb-0"><i class="fas fa-table me-2"></i>All Loan Types</h5>
+                <a href="{% url 'admin_loan_type_create' %}" class="btn-create">
+                    <i class="fas fa-plus me-2"></i>Create New Loan Type
+                </a>
+            </div>
+
+            <!-- Loan Types Table -->
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Loan Type Name</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Active Toggle</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for loan_type in loan_types %}
+                        <tr>
+                            <td><strong>#{{ loan_type.id }}</strong></td>
+                            <td>
+                                <i class="fas fa-tag me-2"></i>{{ loan_type.name }}
+                            </td>
+                            <td>{{ loan_type.description|truncatewords:10|default:"No description" }}</td>
+                            <td>
+                                <span class="badge {% if loan_type.is_active %}badge-active{% else %}badge-inactive{% endif %}">
+                                    {% if loan_type.is_active %}Active{% else %}Inactive{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" {% if loan_type.is_active %}checked{% endif %} 
+                                           onchange="toggleLoanType({{ loan_type.id }}, this)">
+                                    <span class="slider"></span>
+                                </label>
+                            </td>
+                            <td>
+                                <a href="{% url 'admin_loan_type_edit' loan_type.id %}" class="btn-edit">
+                                    <i class="fas fa-edit me-1"></i>Edit
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">
+                                <i class="fas fa-inbox fa-3x mb-3 text-muted"></i>
+                                <p class="text-muted">No loan types found</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Back Button -->
+            <div class="mt-4">
+                <a href="{% url 'admin_dashboard' %}" class="btn-back">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AJAX Toggle Script -->
+    <script>
+        function toggleLoanType(loanTypeId, checkbox) {
+            fetch(`/custom-admin/loan-types/toggle/${loanTypeId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update UI
+                    const row = checkbox.closest('tr');
+                    const statusBadge = row.querySelector('td:nth-child(4) .badge');
+                    if (data.is_active) {
+                        statusBadge.className = 'badge badge-active';
+                        statusBadge.textContent = 'Active';
+                    } else {
+                        statusBadge.className = 'badge badge-inactive';
+                        statusBadge.textContent = 'Inactive';
+                    }
+                } else {
+                    alert('Failed to update loan type status');
+                    checkbox.checked = !checkbox.checked;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred');
+                checkbox.checked = !checkbox.checked;
+            });
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+
+</html>
