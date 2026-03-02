@@ -1,16 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% block title %}Officer Dashboard | LoanMate{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Officer Dashboard | LoanMate</title>
-
+{% block extra_head %}
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/ui_polish.css' %}">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
@@ -327,10 +326,88 @@
                 text-align: center;
             }
         }
-    </style>
-</head>
+        /* =============================================
+           UI POLISH: CSS Tooltip Bubbles
+           ============================================= */
+        [data-tooltip] { position: relative; }
+        [data-tooltip]::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            background: rgba(15, 15, 35, 0.93);
+            color: #fff;
+            padding: 7px 15px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+            z-index: 9999;
+            letter-spacing: 0.2px;
+        }
+        [data-tooltip]::after {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(15, 15, 35, 0.93);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 9999;
+        }
+        [data-tooltip]:hover::before {
+            opacity: 1; transform: translateX(-50%) translateY(0);
+        }
+        [data-tooltip]:hover::after { opacity: 1; }
 
-<body>
+        /* =============================================
+           UI POLISH: Card Glow Lift
+           ============================================= */
+        .action-card {
+            transition: transform 0.32s ease, box-shadow 0.32s ease !important;
+        }
+        .action-card:hover {
+            transform: translateY(-12px) !important;
+            box-shadow: 0 26px 52px rgba(102, 126, 234, 0.32),
+                        0 0 0 1.5px rgba(102, 126, 234, 0.28) !important;
+        }
+
+        /* =============================================
+           UI POLISH: Button Press + Glow
+           ============================================= */
+        .action-card-btn {
+            transition: all 0.25s ease !important;
+        }
+        .action-card-btn:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 10px 28px rgba(102, 126, 234, 0.5) !important;
+            filter: brightness(1.1);
+        }
+        .action-card-btn:active {
+            transform: translateY(0) scale(0.97) !important;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35) !important;
+        }
+
+        /* =============================================
+           UI POLISH: Typography
+           ============================================= */
+        body { -webkit-font-smoothing: antialiased; }
+        h1, h2, h3 { letter-spacing: -0.3px; }
+        p { line-height: 1.7; }
+        .page-header h1 { font-weight: 700; }
+        .page-header p { color: #777; }
+    </style>
+{% endblock %}
+
+{% block content %}
     <div class="dashboard-container">
         <!-- Header -->
         <div class="dashboard-header">
@@ -366,7 +443,7 @@
                 </div>
                 <h3>Pending Applications</h3>
                 <p>Review and approve/reject pending loan applications from users</p>
-                <a href="{% url 'officers:application_list' %}" class="action-card-btn">
+                <a href="{% url 'officers:application_list' %}" class="action-card-btn" data-tooltip="Review and process pending loan applications">
                     Review Now <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
@@ -378,10 +455,24 @@
                 </div>
                 <h3>Application History</h3>
                 <p>View all loan applications with status filters and complete history</p>
-                <a href="{% url 'officers:application_all' %}" class="action-card-btn">
+                <a href="{% url 'officers:application_all' %}" class="action-card-btn" data-tooltip="View complete application history for all statuses">
                     View All <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
+
+            {% if request.user.userprofile.role == 'officer' %}
+            <!-- My Performance Report Card -->
+            <div class="action-card">
+                <div class="action-card-icon" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>My Performance Report</h3>
+                <p>View reviewed applications and export report</p>
+                <a href="{% url 'reports:officer_reports' %}" class="action-card-btn" data-tooltip="View your reviewed applications and export performance report">
+                    View Report <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            {% endif %}
         </div>
 
         <!-- Info Section -->
@@ -422,6 +513,5 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
 
-</html>
+{% endblock %}
