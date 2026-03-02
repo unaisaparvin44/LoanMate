@@ -12,6 +12,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/ui_polish.css' %}">
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
@@ -347,6 +350,150 @@
             transform: translateY(-2px);
         }
 
+        /* AI Prediction Panel */
+        .ai-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease-out 0.15s;
+            animation-fill-mode: both;
+        }
+
+        .ai-score-row {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 25px;
+        }
+
+        .ai-score-circle {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-weight: 700;
+            border: 6px solid;
+        }
+
+        .ai-score-circle .score-number {
+            font-size: 32px;
+            line-height: 1;
+        }
+
+        .ai-score-circle .score-label {
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+        }
+
+        .ai-gauge-wrap {
+            flex: 1;
+        }
+
+        .ai-gauge-wrap .gauge-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .gauge-bar-bg {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 14px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .gauge-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        .ai-recommendation {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 14px;
+            color: white;
+            margin-bottom: 6px;
+        }
+
+        .ai-message {
+            font-size: 13px;
+            color: #666;
+            margin: 0;
+        }
+
+        .ai-breakdown-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        .ai-breakdown-table thead th {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999;
+            padding: 0 10px 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .ai-breakdown-table tbody tr td {
+            padding: 10px;
+            background: #f8f9fa;
+            font-size: 14px;
+        }
+
+        .ai-breakdown-table tbody tr td:first-child {
+            border-radius: 10px 0 0 10px;
+        }
+
+        .ai-breakdown-table tbody tr td:last-child {
+            border-radius: 0 10px 10px 0;
+            text-align: right;
+        }
+
+        .factor-mini-bar-bg {
+            background: #dee2e6;
+            border-radius: 6px;
+            height: 8px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .factor-mini-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+        }
+
+        .ai-disclaimer {
+            margin-top: 15px;
+            padding: 12px 16px;
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #856404;
+        }
+
+        @media (max-width: 600px) {
+            .ai-score-row { flex-direction: column; align-items: flex-start; }
+        }
+
         /* Alert */
         .alert-custom {
             background: rgba(255, 255, 255, 0.95);
@@ -385,6 +532,92 @@
                 flex-direction: column;
             }
         }
+        /* =============================================
+           UI POLISH: CSS Tooltip Bubbles
+           ============================================= */
+        [data-tooltip] { position: relative; }
+        [data-tooltip]::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            background: rgba(15, 15, 35, 0.93);
+            color: #fff;
+            padding: 7px 15px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+            z-index: 9999;
+        }
+        [data-tooltip]::after {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(15, 15, 35, 0.93);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 9999;
+        }
+        [data-tooltip]:hover::before { opacity: 1; transform: translateX(-50%) translateY(0); }
+        [data-tooltip]:hover::after { opacity: 1; }
+
+        /* =============================================
+           UI POLISH: Icon Breadcrumb
+           ============================================= */
+        .ui-breadcrumb .breadcrumb { background: none; padding: 0; margin: 8px 0 0; font-size: 13px; }
+        .ui-breadcrumb .breadcrumb-item a { color: rgba(255,255,255,0.8); text-decoration: none; font-weight: 500; transition: color 0.2s ease; }
+        .ui-breadcrumb .breadcrumb-item a:hover { color: #fff; }
+        .ui-breadcrumb .breadcrumb-item + .breadcrumb-item::before { color: rgba(255,255,255,0.5); }
+        .ui-breadcrumb .breadcrumb-item i { margin-right: 4px; font-size: 12px; opacity: 0.8; }
+        .ui-breadcrumb .breadcrumb-item.active { color: rgba(255,255,255,0.65); font-weight: 500; }
+
+        /* =============================================
+           UI POLISH: Section Divider Headers
+           ============================================= */
+        .section-divider {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 22px; margin-top: 4px;
+        }
+        .section-divider .sd-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; width: 34px; height: 34px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; flex-shrink: 0;
+        }
+        .section-divider .sd-title {
+            font-size: 17px; font-weight: 700; color: #2d3748; flex: 1;
+            padding-bottom: 10px;
+            border-bottom: 2px solid transparent;
+            background: linear-gradient(135deg, #667eea, #764ba2) bottom / 100% 2px no-repeat;
+        }
+
+        /* =============================================
+           UI POLISH: Back Button Polish
+           ============================================= */
+        .back-btn { transition: all 0.25s ease !important; }
+        .back-btn:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 10px 28px rgba(102, 126, 234, 0.5) !important;
+            filter: brightness(1.1);
+        }
+        .back-btn:active { transform: scale(0.96) !important; }
+
+        /* =============================================
+           UI POLISH: Typography
+           ============================================= */
+        body { -webkit-font-smoothing: antialiased; }
+        h1, h2, h3, h4, h5 { letter-spacing: -0.3px; }
+        p { line-height: 1.7; }
     </style>
 </head>
 
@@ -392,7 +625,16 @@
     <div class="page-container">
         <!-- Header -->
         <div class="page-header">
-            <h1><i class="fas fa-file-alt"></i> Application #{{ application.id }}</h1>
+            <div>
+                <h1><i class="fas fa-file-alt"></i> Application #{{ application.id }}</h1>
+                <nav aria-label="breadcrumb" class="ui-breadcrumb" style="margin-top: 8px;">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'officer_dashboard' %}"><i class="fas fa-home"></i> Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'officers:application_list' %}"><i class="fas fa-clock"></i> Pending</a></li>
+                        <li class="breadcrumb-item active"><i class="fas fa-file-alt"></i> Application #{{ application.id }}</li>
+                    </ol>
+                </nav>
+            </div>
             <a href="{% url 'officers:application_list' %}" class="back-btn">
                 <i class="fas fa-arrow-left"></i> Back to List
             </a>
@@ -400,10 +642,10 @@
 
         <!-- Application Details Card -->
         <div class="details-card">
-            <h2 class="card-title">
-                <i class="fas fa-user-circle"></i>
-                Applicant Information
-            </h2>
+            <div class="section-divider">
+                <div class="sd-icon"><i class="fas fa-user-circle"></i></div>
+                <span class="sd-title">Applicant Information</span>
+            </div>
 
             <div class="detail-grid">
                 <div class="detail-item">
@@ -675,6 +917,73 @@
             </div>
             {% endif %}
         </div>
+
+        <!-- AI Eligibility Score Panel (decision-support only) -->
+        {% if ml_prediction %}
+        <div class="ai-card">
+            <h2 class="card-title">
+                <i class="fas fa-robot" style="color: #667eea;"></i>
+                AI Eligibility Score
+                <span style="font-size:13px; font-weight:400; color:#999; margin-left:8px;">Advisory only</span>
+            </h2>
+
+            <div class="ai-score-row">
+                <div class="ai-score-circle"
+                     style="border-color: {{ ml_prediction.bar_color }}; color: {{ ml_prediction.bar_color }};">
+                    <span class="score-number">{{ ml_prediction.score }}</span>
+                    <span class="score-label">/ 100</span>
+                </div>
+                <div class="ai-gauge-wrap">
+                    <div class="gauge-label">
+                        <span>0 — High Risk</span>
+                        <span>100 — Low Risk</span>
+                    </div>
+                    <div class="gauge-bar-bg">
+                        <div class="gauge-bar-fill"
+                             style="width: {{ ml_prediction.score }}%; background: {{ ml_prediction.bar_color }};"></div>
+                    </div>
+                    <div>
+                        <span class="ai-recommendation"
+                              style="background: {{ ml_prediction.recommendation.color }};">
+                            <i class="{{ ml_prediction.recommendation.icon }}"></i>
+                            {{ ml_prediction.recommendation.label }}
+                        </span>
+                    </div>
+                    <p class="ai-message">{{ ml_prediction.recommendation.message }}</p>
+                </div>
+            </div>
+
+            <table class="ai-breakdown-table">
+                <thead>
+                    <tr>
+                        <th>Factor</th>
+                        <th>Assessment</th>
+                        <th>Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for factor in ml_prediction.breakdown %}
+                    <tr>
+                        <td><i class="{{ factor.icon }} me-2" style="color:#667eea;"></i><strong>{{ factor.factor }}</strong></td>
+                        <td>
+                            {{ factor.label }}
+                            <div class="factor-mini-bar-bg">
+                                <div class="factor-mini-bar-fill"
+                                     style="width: {% widthratio factor.points factor.max 100 %}%; background: {{ ml_prediction.bar_color }};"></div>
+                            </div>
+                        </td>
+                        <td><strong>{{ factor.points }} / {{ factor.max }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="ai-disclaimer">
+                <i class="fas fa-exclamation-triangle me-1"></i>
+                <strong>Advisory only:</strong> This score is for decision-support. The final decision rests entirely with the reviewing officer.
+            </div>
+        </div>
+        {% endif %}
 
         <!-- Review Form or Alert -->
         {% if application.status == 'PENDING' %}
