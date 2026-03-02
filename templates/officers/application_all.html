@@ -12,6 +12,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/ui_polish.css' %}">
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
@@ -509,6 +512,80 @@
                 justify-content: center;
             }
         }
+        /* =============================================
+           UI POLISH: CSS Tooltip Bubbles
+           ============================================= */
+        [data-tooltip] { position: relative; }
+        [data-tooltip]::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            background: rgba(15, 15, 35, 0.93);
+            color: #fff;
+            padding: 7px 15px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+            z-index: 9999;
+        }
+        [data-tooltip]::after {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(15, 15, 35, 0.93);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 9999;
+        }
+        [data-tooltip]:hover::before { opacity: 1; transform: translateX(-50%) translateY(0); }
+        [data-tooltip]:hover::after { opacity: 1; }
+
+        /* =============================================
+           UI POLISH: Application Card Glow + Btn-view
+           ============================================= */
+        .application-card {
+            transition: transform 0.32s ease, box-shadow 0.32s ease !important;
+        }
+        .application-card:hover {
+            transform: translateY(-10px) !important;
+            box-shadow: 0 22px 44px rgba(102, 126, 234, 0.28),
+                        0 0 0 1.5px rgba(102, 126, 234, 0.22) !important;
+        }
+        .btn-view { transition: all 0.25s ease !important; }
+        .btn-view:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 22px rgba(102, 126, 234, 0.4) !important;
+            filter: brightness(1.08);
+        }
+        .btn-view:active { transform: scale(0.96) !important; }
+
+        /* =============================================
+           UI POLISH: Icon Breadcrumb
+           ============================================= */
+        .ui-breadcrumb .breadcrumb { background: none; padding: 0; margin: 8px 0 0; font-size: 13px; }
+        .ui-breadcrumb .breadcrumb-item a { color: #667eea; text-decoration: none; font-weight: 500; transition: color 0.2s ease; }
+        .ui-breadcrumb .breadcrumb-item a:hover { color: #764ba2; }
+        .ui-breadcrumb .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+        .ui-breadcrumb .breadcrumb-item i { margin-right: 4px; font-size: 12px; opacity: 0.8; }
+        .ui-breadcrumb .breadcrumb-item.active { color: #666; font-weight: 500; }
+
+        /* =============================================
+           UI POLISH: Typography
+           ============================================= */
+        body { -webkit-font-smoothing: antialiased; }
+        h1, h2, h3 { letter-spacing: -0.3px; }
+        p { line-height: 1.7; }
     </style>
 </head>
 
@@ -520,6 +597,13 @@
                 <div class="page-header-left">
                     <h1><i class="fas fa-history me-2"></i>Application History</h1>
                     <p>View and manage all loan applications with status filters</p>
+                    <nav aria-label="breadcrumb" class="ui-breadcrumb" style="margin-top: 8px;">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'officer_dashboard' %}"><i class="fas fa-home"></i> Home</a></li>
+                            <li class="breadcrumb-item"><i class="fas fa-user-tie"></i> Officer</li>
+                            <li class="breadcrumb-item active"><i class="fas fa-history"></i> Application History</li>
+                        </ol>
+                    </nav>
                 </div>
                 <a href="{% url 'officer_dashboard' %}" class="btn-back">
                     <i class="fas fa-arrow-left"></i> Back to Dashboard
@@ -609,7 +693,7 @@
                         <span>Awaiting review</span>
                         {% endif %}
                     </div>
-                    <a href="{% url 'officers:application_detail' app.pk %}" class="btn-view">
+                    <a href="{% url 'officers:application_detail' app.pk %}" class="btn-view" data-tooltip="View full details of this application">
                         <i class="fas fa-eye"></i> View Details
                     </a>
                 </div>
