@@ -10,4 +10,7 @@ urlpatterns = [
     path('register/', views.register_user, name='register'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('redirect/', views.role_redirect, name='role_redirect'),
+    path('profile/', views.profile_view, name='profile_view'),
+    path('profile/edit/', views.profile_edit, name='profile_edit'),
 ]
+
