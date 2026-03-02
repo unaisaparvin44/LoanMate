@@ -1,13 +1,646 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <title>Admin Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Admin Dashboard | LoanMate</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/ui_polish.css' %}">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeInDown 0.6s ease-out;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .dashboard-header-content {
+            flex: 1;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dashboard-header h1 {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .dashboard-header p {
+            color: #666;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .stat-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .stat-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .stat-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .stat-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .stat-icon.blue {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-icon.green {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .stat-icon.orange {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat-icon.purple {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Navigation Cards */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .nav-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            animation: fadeInUp 0.6s ease-out 0.5s;
+            animation-fill-mode: both;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-card-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .nav-card h3 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .nav-card p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .nav-card-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-card-btn:hover {
+            transform: translateX(5px);
+            color: white;
+        }
+
+        /* Recent Activity Section */
+        .recent-activity {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 0.6s ease-out 0.6s;
+            animation-fill-mode: both;
+        }
+
+        .recent-activity h4 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: start;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .activity-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-content h6 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .activity-content p {
+            margin: 0;
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Status Badges */
+        .badge-pending {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .badge-approved {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .badge-rejected {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .dashboard-header h1 {
+                font-size: 24px;
+            }
+
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .stats-grid,
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        /* =============================================
+           UI POLISH: CSS Tooltip Bubbles
+           ============================================= */
+        [data-tooltip] { position: relative; }
+        [data-tooltip]::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(4px);
+            background: rgba(15, 15, 35, 0.93);
+            color: #fff;
+            padding: 7px 15px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.3);
+            z-index: 9999;
+            letter-spacing: 0.2px;
+        }
+        [data-tooltip]::after {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(15, 15, 35, 0.93);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 9999;
+        }
+        [data-tooltip]:hover::before {
+            opacity: 1; transform: translateX(-50%) translateY(0);
+        }
+        [data-tooltip]:hover::after { opacity: 1; }
+
+        /* =============================================
+           UI POLISH: Stat + Nav Card Glow Lift
+           ============================================= */
+        .stat-card {
+            transition: transform 0.32s ease, box-shadow 0.32s ease !important;
+        }
+        .stat-card-link:hover .stat-card {
+            transform: translateY(-8px) !important;
+            box-shadow: 0 20px 42px rgba(102, 126, 234, 0.28),
+                        0 0 0 1.5px rgba(102, 126, 234, 0.22) !important;
+        }
+        .nav-card {
+            transition: transform 0.32s ease, box-shadow 0.32s ease !important;
+        }
+        .nav-card:hover {
+            transform: translateY(-8px) !important;
+            box-shadow: 0 20px 42px rgba(102, 126, 234, 0.28),
+                        0 0 0 1.5px rgba(102, 126, 234, 0.22) !important;
+        }
+
+        /* =============================================
+           UI POLISH: Breadcrumb (icon-enhanced global)
+           ============================================= */
+        .ui-breadcrumb .breadcrumb { background: none; padding: 0; margin: 8px 0 0; font-size: 13px; }
+        .ui-breadcrumb .breadcrumb-item a {
+            color: #667eea; text-decoration: none; font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .ui-breadcrumb .breadcrumb-item a:hover { color: #764ba2; }
+        .ui-breadcrumb .breadcrumb-item + .breadcrumb-item::before { color: #bbb; }
+        .ui-breadcrumb .breadcrumb-item i { margin-right: 4px; font-size: 12px; }
+        .ui-breadcrumb .breadcrumb-item.active { color: #666; font-weight: 500; }
+
+        /* =============================================
+           UI POLISH: Typography
+           ============================================= */
+        body { -webkit-font-smoothing: antialiased; }
+        h1, h2, h3 { letter-spacing: -0.3px; }
+        p { line-height: 1.7; }
+    </style>
 </head>
 
 <body>
-  <h1>Admin Dashboard</h1>
-  <p>System control panel</p>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="dashboard-header-content">
+                <h1><i class="fas fa-shield-alt me-3"></i>Custom Admin Dashboard</h1>
+                <p>System Management & Overview - Staff Access Only</p>
+            </div>
+            <a href="{% url 'accounts:login' %}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <a href="{% url 'admin_users' %}" class="stat-card-link" data-tooltip="View all registered users">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-value">{{ total_users }}</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+            </a>
+
+            <a href="{% url 'admin_users' %}?role=officer" class="stat-card-link" data-tooltip="View all officers">
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="stat-value">{{ total_officers }}</div>
+                    <div class="stat-label">Total Officers</div>
+                </div>
+            </a>
+
+            <a href="{% url 'admin_loan_applications' %}" class="stat-card-link" data-tooltip="View all loan applications">
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <div class="stat-value">{{ total_applications }}</div>
+                    <div class="stat-label">Total Applications</div>
+                </div>
+            </a>
+
+            <a href="{% url 'admin_loan_types' %}" class="stat-card-link" data-tooltip="View and manage active loan types">
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-list-alt"></i>
+                    </div>
+                    <div class="stat-value">{{ active_loan_types }}</div>
+                    <div class="stat-label">Active Loan Types</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Application Status Breakdown -->
+        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+            <a href="{% url 'admin_loan_applications' %}?status=PENDING" class="stat-card-link" data-tooltip="View pending applications">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-value">{{ pending_count }}</div>
+                    <div class="stat-label">Pending Applications</div>
+                </div>
+            </a>
+
+            <a href="{% url 'admin_loan_applications' %}?status=APPROVED" class="stat-card-link" data-tooltip="View approved applications">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-value">{{ approved_count }}</div>
+                    <div class="stat-label">Approved Applications</div>
+                </div>
+            </a>
+
+            <a href="{% url 'admin_loan_applications' %}?status=REJECTED" class="stat-card-link" data-tooltip="View rejected applications">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="stat-value">{{ rejected_count }}</div>
+                    <div class="stat-label">Rejected Applications</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Navigation Cards -->
+        <div class="nav-grid">
+            <a href="{% url 'admin_users' %}" class="nav-card" data-tooltip="View and search all registered users">
+                <div class="nav-card-icon blue">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>User Management</h3>
+                <p>View all registered users, search, and filter by role</p>
+                <span class="nav-card-btn">
+                    Manage Users <i class="fas fa-arrow-right"></i>
+                </span>
+            </a>
+
+            <a href="{% url 'admin_officers' %}" class="nav-card" data-tooltip="View all officers and their review statistics">
+                <div class="nav-card-icon green">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <h3>Officer Management</h3>
+                <p>View all officers and their review statistics</p>
+                <span class="nav-card-btn">
+                    Manage Officers <i class="fas fa-arrow-right"></i>
+                </span>
+            </a>
+
+            <a href="{% url 'admin_loan_applications' %}" class="nav-card" data-tooltip="View and filter all loan applications">
+                <div class="nav-card-icon orange">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <h3>Loan Applications</h3>
+                <p>View and filter all loan applications by status and type</p>
+                <span class="nav-card-btn">
+                    View Applications <i class="fas fa-arrow-right"></i>
+                </span>
+            </a>
+
+            <a href="{% url 'admin_loan_types' %}" class="nav-card" data-tooltip="Create, edit, and manage available loan types">
+                <div class="nav-card-icon purple">
+                    <i class="fas fa-list-alt"></i>
+                </div>
+                <h3>Loan Types</h3>
+                <p>Create, edit, and manage available loan types</p>
+                <span class="nav-card-btn">
+                    Manage Loan Types <i class="fas fa-arrow-right"></i>
+                </span>
+            </a>
+
+            {% if request.user.is_staff %}
+            <a href="{% url 'reports:admin_reports' %}" class="nav-card">
+                <div class="nav-card-icon" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3>Reports &amp; Analytics</h3>
+                <p>View system analytics and export data</p>
+                <span class="nav-card-btn">
+                    Open Reports <i class="fas fa-arrow-right"></i>
+                </span>
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Recent Activity -->
+        {% if recent_applications %}
+        <div class="recent-activity">
+            <h4><i class="fas fa-history me-2"></i>Recent Applications</h4>
+
+            {% for app in recent_applications %}
+            <div class="activity-item" style="{% if app.status == 'APPROVED' %}border-left: 4px solid #28a745;{% elif app.status == 'REJECTED' %}border-left: 4px solid #dc3545;{% else %}border-left: 4px solid #ffc107;{% endif %}">
+                <div class="activity-icon" style="{% if app.status == 'APPROVED' %}background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);{% elif app.status == 'REJECTED' %}background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);{% else %}background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);{% endif %}">
+                    {% if app.status == 'APPROVED' %}
+                    <i class="fas fa-check"></i>
+                    {% elif app.status == 'REJECTED' %}
+                    <i class="fas fa-times"></i>
+                    {% else %}
+                    <i class="fas fa-clock"></i>
+                    {% endif %}
+                </div>
+                <div class="activity-content">
+                    <h6>{{ app.user.username }} - {{ app.loan_type.name }}</h6>
+                    <p>
+                        Amount: ₹{{ app.loan_amount|floatformat:0 }} |
+                        Status: <span class="badge badge-{{ app.status|lower }}">{{ app.get_status_display }}</span> |
+                        Submitted: {{ app.created_at|date:"M d, Y" }}
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
