@@ -69,3 +69,72 @@ def register_user(request):
             })
 
     return render(request, 'accounts/register.html')
+
+from accounts.decorators import role_required
+from django.contrib import messages
+
+@role_required("user")
+def profile_view(request):
+    """View user profile with loan statistics"""
+    profile = request.user.userprofile
+    
+    # Import LoanApplication here to avoid circular imports
+    from loans.models import LoanApplication
+    
+    # Calculate loan statistics
+    total_loans = LoanApplication.objects.filter(user=request.user).count()
+    approved_loans = LoanApplication.objects.filter(user=request.user, status='APPROVED').count()
+    rejected_loans = LoanApplication.objects.filter(user=request.user, status='REJECTED').count()
+    
+    context = {
+        'profile': profile,
+        'total_loans': total_loans,
+        'approved_loans': approved_loans,
+        'rejected_loans': rejected_loans,
+    }
+    
+    return render(request, 'accounts/profile_view.html', context)
+
+@role_required("user")
+def profile_edit(request):
+    """Edit user profile"""
+    profile = request.user.userprofile
+    
+    if request.method == 'POST':
+        # Get form data
+        phone_number = request.POST.get('phone_number', '').strip()
+        address = request.POST.get('address', '').strip()
+        employment_type = request.POST.get('employment_type', '').strip()
+        monthly_income = request.POST.get('monthly_income', '').strip()
+        
+        # Validation
+        errors = []
+        
+        # Validate monthly income if provided
+        if monthly_income:
+            try:
+                income_value = int(monthly_income)
+                if income_value < 0:
+                    errors.append("Monthly income cannot be negative.")
+            except ValueError:
+                errors.append("Monthly income must be a valid number.")
+        
+        if errors:
+            return render(request, 'accounts/profile_edit.html', {
+                'profile': profile,
+                'errors': errors,
+                'data': request.POST
+            })
+        
+        # Update profile
+        profile.phone_number = phone_number if phone_number else None
+        profile.address = address if address else None
+        profile.employment_type = employment_type if employment_type else None
+        profile.monthly_income = int(monthly_income) if monthly_income else None
+        profile.save()
+        
+        messages.success(request, 'Profile updated successfully!')
+        return redirect('accounts:profile_view')
+    
+    return render(request, 'accounts/profile_edit.html', {'profile': profile})
+
