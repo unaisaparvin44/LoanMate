@@ -354,7 +354,104 @@
             color: #fff;
         }
 
+        /* System Overview Card */
+        .overview-card {
+            background: rgba(255, 255, 255, 0.10);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1.5px solid rgba(255, 255, 255, 0.22);
+            border-radius: 24px;
+            padding: 36px 32px 32px;
+            margin-bottom: 30px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25),
+                        0 0 0 1px rgba(255,255,255,0.08) inset;
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .overview-card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 28px;
+            letter-spacing: -0.2px;
+        }
+
+        .overview-card-title .title-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(102,126,234,0.45);
+            flex-shrink: 0;
+        }
+
+        .overview-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .overview-stat-item {
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 16px;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            transition: box-shadow 0.28s ease, transform 0.28s ease;
+            cursor: default;
+        }
+
+        .overview-stat-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 32px rgba(102, 126, 234, 0.30),
+                        0 0 0 1.5px rgba(102, 126, 234, 0.30);
+        }
+
+        .overview-stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .overview-stat-value {
+            font-size: 30px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .overview-stat-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.70);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         /* Responsive */
+        @media (max-width: 1100px) {
+            .overview-stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
             .dashboard-header {
                 flex-direction: column;
@@ -370,8 +467,17 @@
                 justify-content: center;
             }
 
-            .stats-grid,
             .nav-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .overview-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .overview-stats-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -473,80 +579,71 @@
             </a>
         </div>
 
-        <!-- Statistics Cards -->
-        <div class="stats-grid">
-            <a href="{% url 'admin_users' %}" class="stat-card-link" data-tooltip="View all registered users">
-                <div class="stat-card">
-                    <div class="stat-icon blue">
+        <!-- System Overview Card -->
+        <div class="overview-card">
+            <div class="overview-card-title">
+                <div class="title-icon"><i class="fas fa-chart-pie"></i></div>
+                System Overview
+            </div>
+            <div class="overview-stats-grid">
+
+                <div class="overview-stat-item">
+                    <div class="overview-stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                         <i class="fas fa-users"></i>
                     </div>
-                    <div class="stat-value">{{ total_users }}</div>
-                    <div class="stat-label">Total Users</div>
+                    <div class="overview-stat-value">{{ total_users }}</div>
+                    <div class="overview-stat-label">Total Users</div>
                 </div>
-            </a>
 
-            <a href="{% url 'admin_users' %}?role=officer" class="stat-card-link" data-tooltip="View all officers">
-                <div class="stat-card">
-                    <div class="stat-icon green">
+                <div class="overview-stat-item">
+                    <div class="overview-stat-icon" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
                         <i class="fas fa-user-tie"></i>
                     </div>
-                    <div class="stat-value">{{ total_officers }}</div>
-                    <div class="stat-label">Total Officers</div>
+                    <div class="overview-stat-value">{{ total_officers }}</div>
+                    <div class="overview-stat-label">Total Officers</div>
                 </div>
-            </a>
 
-            <a href="{% url 'admin_loan_applications' %}" class="stat-card-link" data-tooltip="View all loan applications">
-                <div class="stat-card">
-                    <div class="stat-icon orange">
+                <div class="overview-stat-item">
+                    <div class="overview-stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                         <i class="fas fa-file-invoice-dollar"></i>
                     </div>
-                    <div class="stat-value">{{ total_applications }}</div>
-                    <div class="stat-label">Total Applications</div>
+                    <div class="overview-stat-value">{{ total_applications }}</div>
+                    <div class="overview-stat-label">Total Applications</div>
                 </div>
-            </a>
 
-            <a href="{% url 'admin_loan_types' %}" class="stat-card-link" data-tooltip="View and manage active loan types">
-                <div class="stat-card">
-                    <div class="stat-icon purple">
+                <div class="overview-stat-item">
+                    <div class="overview-stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                         <i class="fas fa-list-alt"></i>
                     </div>
-                    <div class="stat-value">{{ active_loan_types }}</div>
-                    <div class="stat-label">Active Loan Types</div>
+                    <div class="overview-stat-value">{{ active_loan_types }}</div>
+                    <div class="overview-stat-label">Active Loan Types</div>
                 </div>
-            </a>
-        </div>
 
-        <!-- Application Status Breakdown -->
-        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-            <a href="{% url 'admin_loan_applications' %}?status=PENDING" class="stat-card-link" data-tooltip="View pending applications">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="overview-stat-item">
+                    <div class="overview-stat-icon" style="background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);">
                         <i class="fas fa-clock"></i>
                     </div>
-                    <div class="stat-value">{{ pending_count }}</div>
-                    <div class="stat-label">Pending Applications</div>
+                    <div class="overview-stat-value">{{ pending_count }}</div>
+                    <div class="overview-stat-label">Pending</div>
                 </div>
-            </a>
 
-            <a href="{% url 'admin_loan_applications' %}?status=APPROVED" class="stat-card-link" data-tooltip="View approved applications">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+                <div class="overview-stat-item">
+                    <div class="overview-stat-icon" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
                         <i class="fas fa-check-circle"></i>
                     </div>
-                    <div class="stat-value">{{ approved_count }}</div>
-                    <div class="stat-label">Approved Applications</div>
+                    <div class="overview-stat-value">{{ approved_count }}</div>
+                    <div class="overview-stat-label">Approved</div>
                 </div>
-            </a>
 
-            <a href="{% url 'admin_loan_applications' %}?status=REJECTED" class="stat-card-link" data-tooltip="View rejected applications">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);">
+                <div class="overview-stat-item">
+                    <div class="overview-stat-icon" style="background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);">
                         <i class="fas fa-times-circle"></i>
                     </div>
-                    <div class="stat-value">{{ rejected_count }}</div>
-                    <div class="stat-label">Rejected Applications</div>
+                    <div class="overview-stat-value">{{ rejected_count }}</div>
+                    <div class="overview-stat-label">Rejected</div>
                 </div>
-            </a>
+
+            </div>
         </div>
 
         <!-- Navigation Cards -->
