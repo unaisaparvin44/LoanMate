@@ -12,5 +12,6 @@ urlpatterns = [
     path('redirect/', views.role_redirect, name='role_redirect'),
     path('profile/', views.profile_view, name='profile_view'),
     path('profile/edit/', views.profile_edit, name='profile_edit'),
+    path('calculate-eligibility/', views.calculate_eligibility, name='calculate_eligibility'),
 ]
 
