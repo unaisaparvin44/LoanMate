@@ -106,11 +106,16 @@ def admin_officers_list(request):
             Q(email__icontains=search_query)
         )
     
-    # Annotate with loan counts
+    # Annotate with reviewed count using the correct reviewed_by reverse relation.
+    # LoanApplication.reviewed_by FK has related_name='reviewed_applications'.
+    # PENDING applications always have reviewed_by=None (not yet acted on),
+    # so per-officer pending is impossible from this model — we use a global count instead.
     officers = officers.annotate(
-        total_reviewed=Count('loanapplication', filter=Q(loanapplication__reviewed_at__isnull=False)),
-        pending_assigned=Count('loanapplication', filter=Q(loanapplication__status='PENDING'))
+        total_reviewed=Count('reviewed_applications'),
     )
+
+    # Global pending count — applications waiting for any officer to review
+    global_pending_count = LoanApplication.objects.filter(status='PENDING').count()
     
     # Order by date joined (newest first)
     officers = officers.order_by('-date_joined')
@@ -123,6 +128,7 @@ def admin_officers_list(request):
     context = {
         'page_obj': page_obj,
         'search_query': search_query,
+        'global_pending_count': global_pending_count,
     }
     
     return render(request, 'dashboards/admin_officers_list.html', context)
