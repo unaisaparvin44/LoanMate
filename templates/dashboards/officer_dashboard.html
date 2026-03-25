@@ -472,6 +472,18 @@
                     View Report <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
+
+            <!-- My Profile Card -->
+            <div class="action-card">
+                <div class="action-card-icon" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);">
+                    <i class="fas fa-user-edit"></i>
+                </div>
+                <h3>My Profile</h3>
+                <p>Manage your officer details, designation, and experience</p>
+                <a href="{% url 'officers:officer_profile' %}" class="action-card-btn" data-tooltip="Update your profile information">
+                    Edit Profile <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
             {% endif %}
         </div>
 
