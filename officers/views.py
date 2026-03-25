@@ -65,3 +65,53 @@ def officer_application_all(request):
         'current_filter': status_filter
     }
     return render(request, 'officers/application_all.html', context)
+
+
+from django.contrib import messages
+
+@role_required("officer")
+def officer_profile(request):
+    """View and edit officer profile details"""
+    profile = request.user.userprofile
+    
+    if request.method == 'POST':
+        phone = request.POST.get('phone_number', '').strip()
+        address = request.POST.get('address', '').strip()
+        designation = request.POST.get('designation', '').strip()
+        experience_str = request.POST.get('experience', '').strip()
+        
+        errors = []
+        
+        # Validation
+        if phone:
+            if not phone.isdigit():
+                errors.append("Phone number must contain only numbers.")
+            elif len(phone) < 10 or len(phone) > 15:
+                errors.append("Phone number must be between 10 and 15 digits.")
+                
+        experience = None
+        if experience_str:
+            try:
+                experience = int(experience_str)
+                if experience < 0:
+                    errors.append("Experience must be a positive number.")
+            except ValueError:
+                errors.append("Experience must be a valid number.")
+                
+        if not errors:
+            profile.phone_number = phone or None
+            profile.address = address or None
+            profile.designation = designation or None
+            profile.experience = experience if experience_str else None
+            profile.save()
+            messages.success(request, "Profile updated successfully.")
+            return redirect('officers:officer_profile')
+        else:
+            for error in errors:
+                messages.error(request, error)
+                
+    context = {
+        'profile': profile
+    }
+    return render(request, 'officers/officer_profile.html', context)
+
