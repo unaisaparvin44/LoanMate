@@ -16,6 +16,10 @@ class UserProfile(models.Model):
     address = models.TextField(blank=True, null=True)
     employment_type = models.CharField(max_length=50, blank=True, null=True)
     monthly_income = models.PositiveIntegerField(blank=True, null=True)
+
+    # Officer-specific fields
+    designation = models.CharField(max_length=100, blank=True, null=True)
+    experience = models.PositiveIntegerField(blank=True, null=True, help_text="Years of experience")
     
     def __str__(self):
         return f"{self.user.username} - {self.role}"
