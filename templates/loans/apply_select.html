@@ -217,55 +217,66 @@
             <p>Select the type of loan you need and fill out the application form</p>
         </div>
 
-        <!-- Loan Types Grid -->
+        <!-- Loan Types Grid — dynamically populated from database -->
         <div class="loan-types-grid">
-            <!-- Personal Loan -->
+            {% for loan in loan_types %}
+
+            {% if loan.name == "Personal Loan" %}
             <a href="{% url 'loans:apply_personal_loan' %}" class="loan-card">
-                <div class="loan-icon">
-                    <i class="fas fa-user"></i>
-                </div>
-                <h3>Personal Loan</h3>
-                <p>Quick funds for personal needs like weddings, medical expenses, or travel</p>
-                <span class="apply-btn">
-                    <i class="fas fa-arrow-right me-2"></i>Apply Now
-                </span>
+                <div class="loan-icon"><i class="fas fa-user"></i></div>
+                <h3>{{ loan.name }}</h3>
+                <p>{{ loan.description|default:"Quick funds for personal needs like weddings, medical expenses, or travel" }}</p>
+                <span class="apply-btn"><i class="fas fa-arrow-right me-2"></i>Apply Now</span>
             </a>
 
-            <!-- Home Loan -->
+            {% elif loan.name == "Home Loan" %}
             <a href="{% url 'loans:apply_home_loan' %}" class="loan-card">
-                <div class="loan-icon">
-                    <i class="fas fa-home"></i>
-                </div>
-                <h3>Home Loan</h3>
-                <p>Finance your dream home with competitive interest rates and flexible tenure</p>
-                <span class="apply-btn">
-                    <i class="fas fa-arrow-right me-2"></i>Apply Now
-                </span>
+                <div class="loan-icon"><i class="fas fa-home"></i></div>
+                <h3>{{ loan.name }}</h3>
+                <p>{{ loan.description|default:"Finance your dream home with competitive interest rates and flexible tenure" }}</p>
+                <span class="apply-btn"><i class="fas fa-arrow-right me-2"></i>Apply Now</span>
             </a>
 
-            <!-- Education Loan -->
+            {% elif loan.name == "Education Loan" %}
             <a href="{% url 'loans:apply_education_loan' %}" class="loan-card">
-                <div class="loan-icon">
-                    <i class="fas fa-graduation-cap"></i>
-                </div>
-                <h3>Education Loan</h3>
-                <p>Invest in your future with education loans for higher studies and courses</p>
-                <span class="apply-btn">
-                    <i class="fas fa-arrow-right me-2"></i>Apply Now
-                </span>
+                <div class="loan-icon"><i class="fas fa-graduation-cap"></i></div>
+                <h3>{{ loan.name }}</h3>
+                <p>{{ loan.description|default:"Invest in your future with education loans for higher studies and courses" }}</p>
+                <span class="apply-btn"><i class="fas fa-arrow-right me-2"></i>Apply Now</span>
             </a>
 
-            <!-- Vehicle Loan -->
+            {% elif loan.name == "Vehicle Loan" %}
             <a href="{% url 'loans:apply_vehicle_loan' %}" class="loan-card">
-                <div class="loan-icon">
-                    <i class="fas fa-car"></i>
-                </div>
-                <h3>Vehicle Loan</h3>
-                <p>Get your dream vehicle with easy financing options for cars and bikes</p>
-                <span class="apply-btn">
-                    <i class="fas fa-arrow-right me-2"></i>Apply Now
-                </span>
+                <div class="loan-icon"><i class="fas fa-car"></i></div>
+                <h3>{{ loan.name }}</h3>
+                <p>{{ loan.description|default:"Get your dream vehicle with easy financing options for cars and bikes" }}</p>
+                <span class="apply-btn"><i class="fas fa-arrow-right me-2"></i>Apply Now</span>
             </a>
+
+            {% elif loan.name == "Agriculture" %}
+            <a href="{% url 'loans:apply_agriculture_loan' %}" class="loan-card">
+                <div class="loan-icon"><i class="fas fa-tractor"></i></div>
+                <h3>{{ loan.name }}</h3>
+                <p>{{ loan.description|default:"Finance your agricultural needs with affordable farm loans." }}</p>
+                <span class="apply-btn"><i class="fas fa-arrow-right me-2"></i>Apply Now</span>
+            </a>
+
+            {% else %}
+            <a href="/user/dashboard/" class="loan-card">
+                <div class="loan-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                <h3>{{ loan.name }}</h3>
+                <p>{{ loan.description|default:"Apply for this loan type through our team." }}</p>
+                <span class="apply-btn"><i class="fas fa-arrow-right me-2"></i>Apply Now</span>
+            </a>
+            {% endif %}
+
+            {% empty %}
+            <div class="loan-card" style="cursor: default; grid-column: 1 / -1; text-align: center;">
+                <div class="loan-icon"><i class="fas fa-exclamation-circle"></i></div>
+                <h3>No Loan Types Available</h3>
+                <p>There are currently no active loan types. Please check back later.</p>
+            </div>
+            {% endfor %}
         </div>
 
         <!-- Back Button -->
