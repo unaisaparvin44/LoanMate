@@ -309,3 +309,34 @@ def predict_score(data: dict) -> dict:
         "breakdown": breakdown,
         "bar_color": bar_color,
     }
+
+
+# ── Chatbot Public API ────────────────────────────────────────────────────────
+
+def predict_loan_approval(features: dict) -> float:
+    """
+    Chatbot-facing interface for the ML scoring engine.
+
+    Accepts a plain feature dict and returns an approval probability
+    as a float between 0.0 and 1.0.
+
+    Expected keys (all optional except where noted):
+        income        (int)   — monthly income             [required]
+        credit_score  (int)   — CIBIL / credit score       [required]
+        loan_amount   (int)   — total loan amount requested [required]
+        loan_tenure   (int)   — tenure in months (default: 12)
+        employment_type (str) — employment type  (default: "salaried")
+
+    Returns:
+        float — approval probability, e.g. 0.78 means 78% chance
+    """
+    data = {
+        "income":       int(features.get("income", 0)),
+        "amount":       int(features.get("loan_amount", 0)),
+        "credit_score": int(features.get("credit_score", 0)),
+        "loan_tenure":  int(features.get("loan_tenure", 12)),
+        "employment":   str(features.get("employment_type", "salaried")),
+    }
+    result = predict_score(data)
+    # Convert 0–100 score to 0.0–1.0 probability
+    return round(result["score"] / 100, 2)
