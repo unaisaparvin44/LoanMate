@@ -9,6 +9,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        input[name="loan_tenure"] { cursor: pointer; background-color: #fff !important; }
+        .flatpickr-calendar { font-family: 'Poppins', sans-serif; }
+    </style>
     <style>
         * {
             margin: 0;
@@ -230,8 +236,8 @@
                             <label class="form-label">Loan Tenure (months) <span style="color: red;">*</span></label>
                             {{ form.loan_tenure }}
                             {% if form.loan_tenure.errors %}{{ form.loan_tenure.errors }}{% endif %}
-                            {% if form.loan_tenure.help_text %}<div class="form-text">{{ form.loan_tenure.help_text }}
-                            </div>{% endif %}
+                            {% if form.loan_tenure.help_text %}<small class="form-text text-muted">{{ form.loan_tenure.help_text }}</small>{% endif %}
+                            <div class="form-text">Click the field and pick your repayment end date — months auto-calculated</div>
                         </div>
                     </div>
 
@@ -289,8 +295,7 @@
                             <label class="form-label">Current EMI Amount (if applicable)</label>
                             {{ form.emi_amount }}
                             {% if form.emi_amount.errors %}{{ form.emi_amount.errors }}{% endif %}
-                            {% if form.emi_amount.help_text %}<div class="form-text">{{ form.emi_amount.help_text }}
-                            </div>{% endif %}
+                            {% if form.emi_amount.help_text %}<small class="form-text text-muted">{{ form.emi_amount.help_text }}</small>{% endif %}
                         </div>
                     </div>
 
@@ -310,7 +315,39 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tenureInput = document.querySelector('input[name="loan_tenure"]');
+            if (tenureInput) {
+                tenureInput.style.display = 'none';
+                const displayInput = document.createElement('input');
+                displayInput.type = 'text';
+                displayInput.id = 'tenure_display';
+                displayInput.className = 'form-control';
+                displayInput.placeholder = 'Click to select your repayment end date';
+                displayInput.readOnly = true;
+                displayInput.style.cursor = 'pointer';
+                tenureInput.parentNode.insertBefore(displayInput, tenureInput);
+                flatpickr(displayInput, {
+                    mode: 'single',
+                    minDate: 'today',
+                    allowInput: false,
+                    disableMobile: false,
+                    dateFormat: 'd M Y',
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length === 0) return;
+                        const selected = selectedDates[0];
+                        const today = new Date(); today.setHours(0,0,0,0);
+                        let months = (selected.getFullYear() - today.getFullYear()) * 12
+                                   + (selected.getMonth() - today.getMonth());
+                        if (selected.getDate() > today.getDate()) months++;
+                        tenureInput.value = months > 0 ? months : 1;
+                    }
+                });
+            }
+        });
+    </script>
 </body>
-
 </html>
