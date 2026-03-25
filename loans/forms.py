@@ -233,6 +233,71 @@ class VehicleLoanForm(BaseLoanApplicationForm):
         return amount
 
 
+class AgricultureLoanForm(BaseLoanApplicationForm):
+    """Form for Agriculture Loan with specific fields"""
+    CROP_TYPE_CHOICES = [
+        ('', 'Select crop type'),
+        ('Cereals', 'Cereals (Wheat, Rice, Maize)'),
+        ('Pulses', 'Pulses (Lentils, Chickpeas)'),
+        ('Vegetables', 'Vegetables'),
+        ('Fruits', 'Fruits'),
+        ('Cash Crops', 'Cash Crops (Cotton, Sugarcane)'),
+        ('Other', 'Other'),
+    ]
+
+    PURPOSE_CHOICES = [
+        ('', 'Select purpose'),
+        ('Equipment', 'Farm Equipment / Machinery'),
+        ('Seeds', 'Seeds & Fertilizers'),
+        ('Irrigation', 'Irrigation Infrastructure'),
+        ('Land', 'Land Development'),
+        ('General', 'General Agricultural Expenses'),
+    ]
+
+    farm_size = forms.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        min_value=0.01,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter farm size in acres', 'step': '0.01'}),
+        help_text="Total farm area in acres"
+    )
+    crop_type = forms.ChoiceField(
+        choices=CROP_TYPE_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    purpose = forms.ChoiceField(
+        choices=PURPOSE_CHOICES,
+        label="Purpose of Loan",
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )
+    annual_farm_income = forms.IntegerField(
+        min_value=1,
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter annual farm income'}),
+        help_text="Total annual income from farming activities"
+    )
+
+    def clean_loan_amount(self):
+        amount = self.cleaned_data.get('loan_amount')
+        MIN_LOAN_AMOUNT = 10000    # ₹10,000
+        MAX_AGRI_LOAN   = 5000000  # ₹50,00,000 (50 Lakhs)
+
+        if amount is not None:
+            if amount <= 0:
+                raise forms.ValidationError("Loan amount must be greater than zero.")
+            if amount < MIN_LOAN_AMOUNT:
+                raise forms.ValidationError(
+                    f"Agriculture loan amount must be at least ₹10,000. You requested ₹{amount:,}."
+                )
+            if amount > MAX_AGRI_LOAN:
+                raise forms.ValidationError(
+                    f"Agriculture loan amount cannot exceed ₹50,00,000. You requested ₹{amount:,}. "
+                    f"Please reduce your loan amount by ₹{amount - MAX_AGRI_LOAN:,}."
+                )
+        return amount
+
+
+
+
 # Keep the old form for backward compatibility if needed
 class LoanApplicationForm(forms.ModelForm):
     class Meta:
