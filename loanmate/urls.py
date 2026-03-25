@@ -47,6 +47,8 @@ urlpatterns = [
     path('officer/', include('officers.urls')),
     path('reports/', include('reports.urls')),
     path('ml/', include('ml_engine.urls')),
+    path('chatbot/', include('chatbot.urls')),   # FAQ Chatbot (additive – DO NOT REMOVE)
     path('', include('accounts.urls')),
 ]
+
 
