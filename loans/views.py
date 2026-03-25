@@ -6,7 +6,8 @@ from .forms import (
     PersonalLoanForm, 
     HomeLoanForm, 
     EducationLoanForm, 
-    VehicleLoanForm
+    VehicleLoanForm,
+    AgricultureLoanForm,
 )
 from .models import LoanApplication, LoanType
 from ml_engine.predictor import predict as ml_predict
@@ -15,7 +16,8 @@ from ml_engine.predictor import predict as ml_predict
 @login_required
 def apply_select_loan_type(request):
     """Display loan type selection page"""
-    return render(request, 'loans/apply_select.html')
+    loan_types = LoanType.objects.filter(is_active=True).order_by('name')
+    return render(request, 'loans/apply_select.html', {'loan_types': loan_types})
 
 
 @login_required
@@ -213,6 +215,52 @@ def apply_vehicle_loan(request):
     
     return render(request, 'loans/apply_vehicle.html', {'form': form})
 
+
+@login_required
+def apply_agriculture_loan(request):
+    """Handle Agriculture Loan application"""
+    if request.method == 'POST':
+        form = AgricultureLoanForm(request.POST)
+        if form.is_valid():
+            try:
+                loan_type = LoanType.objects.get(name="Agriculture", is_active=True)
+
+                application = LoanApplication(
+                    user=request.user,
+                    loan_type=loan_type,
+                    loan_amount=form.cleaned_data['loan_amount'],
+                    loan_tenure=form.cleaned_data['loan_tenure'],
+                    income=form.cleaned_data['income'],
+                    employment_type=form.cleaned_data['employment_type'],
+                    credit_score=form.cleaned_data['credit_score'],
+                    status='PENDING',
+                    extra_details={
+                        'farm_size': str(form.cleaned_data['farm_size']),
+                        'crop_type': form.cleaned_data['crop_type'],
+                        'purpose': form.cleaned_data['purpose'],
+                        'annual_farm_income': form.cleaned_data['annual_farm_income'],
+                    }
+                )
+                application.save()
+
+                messages.success(request, 'Your Agriculture Loan application has been submitted successfully!')
+                return redirect('loans:my_applications')
+
+            except LoanType.DoesNotExist:
+                messages.error(request, 'Agriculture Loan type is not available. Please contact support.')
+                return render(request, 'loans/apply_agriculture.html', {'form': form})
+    else:
+        initial = {}
+        if hasattr(request.user, 'userprofile'):
+            profile = request.user.userprofile
+            if profile.employment_type:
+                initial['employment_type'] = profile.employment_type
+            if profile.monthly_income:
+                initial['income'] = profile.monthly_income
+
+        form = AgricultureLoanForm(initial=initial) if initial else AgricultureLoanForm()
+
+    return render(request, 'loans/apply_agriculture.html', {'form': form})
 
 # Keep old view for backward compatibility if needed
 @login_required
