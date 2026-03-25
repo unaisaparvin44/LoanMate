@@ -355,6 +355,77 @@
             border-radius: 8px;
             border-left: 3px solid #dee2e6;
         }
+
+        /* Eligibility Breakdown */
+        .breakdown-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #2d3748;
+            margin: 22px 0 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .breakdown-title i { color: #667eea; }
+
+        .breakdown-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 11px 14px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 9px;
+            transition: background 0.2s;
+        }
+        .breakdown-row:hover { background: #eef0fb; }
+
+        .bd-factor-name {
+            min-width: 130px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .bd-factor-name i { color: #667eea; font-size: 13px; }
+
+        .bd-center {
+            flex: 1;
+        }
+        .bd-label {
+            font-size: 11px;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        .bd-bar-track {
+            background: #dee2e6;
+            border-radius: 6px;
+            height: 8px;
+            overflow: hidden;
+        }
+        .bd-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.9s ease;
+        }
+
+        .bd-points {
+            min-width: 60px;
+            text-align: right;
+            font-size: 13px;
+            font-weight: 700;
+            color: #333;
+            white-space: nowrap;
+        }
+        .bd-points span {
+            font-size: 11px;
+            font-weight: 400;
+            color: #999;
+        }
         /* =============================================
            UI POLISH: Icon Breadcrumb
            ============================================= */
@@ -555,7 +626,34 @@
                 </div>
             </div>
 
-            <p class="ai-note">
+            <!-- Eligibility Breakdown -->
+            {% if ml_prediction.breakdown %}
+            <div class="breakdown-title">
+                <i class="fas fa-chart-bar"></i> Eligibility Breakdown
+            </div>
+            {% for item in ml_prediction.breakdown %}
+            {% with pct=item.points|floatformat:0 %}
+            <div class="breakdown-row">
+                <div class="bd-factor-name">
+                    <i class="{{ item.icon }}"></i>
+                    {{ item.factor }}
+                </div>
+                <div class="bd-center">
+                    <div class="bd-label">{{ item.label }}</div>
+                    <div class="bd-bar-track">
+                        <div class="bd-bar-fill"
+                             style="width: {% widthratio item.points item.max 100 %}%; background: {{ ml_prediction.bar_color }};"></div>
+                    </div>
+                </div>
+                <div class="bd-points">
+                    {{ item.points }} <span>/ {{ item.max }}</span>
+                </div>
+            </div>
+            {% endwith %}
+            {% endfor %}
+            {% endif %}
+
+            <p class="ai-note" style="margin-top: 16px;">
                 <i class="fas fa-info-circle me-1"></i>
                 This is an automated pre-screen estimate based on your financial profile.
                 It does <strong>not</strong> determine the outcome — your application will be reviewed by a loan officer.
