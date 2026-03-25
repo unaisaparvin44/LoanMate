@@ -267,11 +267,11 @@
 
         /* Logout Button */
         .logout-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 25px;
-            background: rgba(255, 255, 255, 0.95);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            background: rgba(255, 255, 255, 0.9);
             color: #667eea;
             border: 2px solid #667eea;
             border-radius: 10px;
@@ -279,15 +279,25 @@
             font-weight: 600;
             font-size: 14px;
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.15);
+            white-space: nowrap;
         }
 
         .logout-btn:hover {
             background: #667eea;
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 20px rgba(102,126,234,0.35);
         }
+
+        .header-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .header-top-text { flex: 1; }
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -299,11 +309,13 @@
                 grid-template-columns: 1fr;
             }
 
+            .header-top {
+                flex-direction: column;
+            }
+
             .logout-btn {
-                position: static;
                 width: 100%;
-                margin-bottom: 20px;
-                text-align: center;
+                justify-content: center;
             }
         }
 
@@ -523,16 +535,20 @@
         {% endif %}
     </div>
 
-    <!-- Logout Button -->
-    <a href="{% url 'accounts:login' %}" class="logout-btn">
-        <i class="fas fa-sign-out-alt me-2"></i>Logout
-    </a>
+
 
     <div class="dashboard-container">
         <!-- Header -->
         <div class="dashboard-header">
-            <h1><i class="fas fa-tachometer-alt me-3"></i>User Dashboard</h1>
-            <p>Welcome to your LoanMate dashboard - Manage your loan applications</p>
+            <div class="header-top">
+                <div class="header-top-text">
+                    <h1><i class="fas fa-tachometer-alt me-3"></i>User Dashboard</h1>
+                    <p>Welcome to your LoanMate dashboard - Manage your loan applications</p>
+                </div>
+                <a href="{% url 'accounts:login' %}" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>Logout
+                </a>
+            </div>
 
             <div class="user-info">
                 <div class="user-avatar">
@@ -569,14 +585,14 @@
                     </h6>
                     <p style="margin-bottom: 5px;">
                         {% if app.status == 'APPROVED' %}
-                            <strong>Congratulations!</strong> Your loan application for ₹{{ app.loan_amount|floatformat:0 }} has been approved.
+                            <strong>Congratulations!</strong> Your loan application for â‚¹{{ app.loan_amount|floatformat:0 }} has been approved.
                         {% elif app.status == 'REJECTED' %}
-                            Your loan application for ₹{{ app.loan_amount|floatformat:0 }} was not approved.
+                            Your loan application for â‚¹{{ app.loan_amount|floatformat:0 }} was not approved.
                             {% if app.remarks %}
                             <br><em>Reason: {{ app.remarks|truncatewords:15 }}</em>
                             {% endif %}
                         {% else %}
-                            Your loan application for ₹{{ app.loan_amount|floatformat:0 }} is under review.
+                            Your loan application for â‚¹{{ app.loan_amount|floatformat:0 }} is under review.
                         {% endif %}
                     </p>
                     <p style="font-size: 12px; color: #999; margin: 0;">
@@ -629,6 +645,26 @@
                     View Profile <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
+
+            <!-- Eligibility Calculator Card -->
+            <div class="action-card">
+                <div class="action-card-icon primary">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <h3>Eligibility Calculator</h3>
+                <form id="eligibility-form">
+                    <input type="number" id="calc-income" class="form-control mb-3" placeholder="Income" required>
+                    <input type="number" id="calc-loan" class="form-control mb-3" placeholder="Loan Amount" required>
+                    <input type="number" id="calc-score" class="form-control mb-3" placeholder="Credit Score" required>
+                    <input type="number" id="calc-tenure" class="form-control mb-3" placeholder="Tenure (months)" required>
+                    <button type="submit" class="action-card-btn w-100 border-0" style="justify-content: center;">Check Eligibility</button>
+                </form>
+                <div id="calc-result" class="mt-3 p-3 bg-light rounded" style="display: none;">
+                    <p class="mb-1"><strong>EMI:</strong> ₹<span id="res-emi"></span></p>
+                    <p class="mb-1"><strong>Eligible:</strong> <span id="res-eligible"></span></p>
+                    <p class="mb-0"><strong>Approval Probability:</strong> <span id="res-prob"></span>%</p>
+                </div>
+            </div>
         </div>
 
         <!-- Info Section -->
@@ -670,6 +706,50 @@
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Calculator Script -->
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        document.getElementById('eligibility-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetch('{% url "accounts:calculate_eligibility" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    income: document.getElementById('calc-income').value,
+                    loan_amount: document.getElementById('calc-loan').value,
+                    credit_score: document.getElementById('calc-score').value,
+                    tenure: document.getElementById('calc-tenure').value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('calc-result').style.display = 'block';
+                document.getElementById('res-emi').textContent = data.emi;
+                document.getElementById('res-eligible').textContent = data.eligible ? 'YES' : 'NO';
+                document.getElementById('res-eligible').style.color = data.eligible ? '#28a745' : '#dc3545';
+                document.getElementById('res-prob').textContent = data.probability;
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+
     <!-- Toast Notification Script -->
     <script>
         // Close toast function
@@ -694,6 +774,461 @@
             });
         });
     </script>
+    <!-- =====================================================
+         LOANMATE FAQ CHATBOT WIDGET  (v2 â€” upgraded)
+         Appended below â€” does NOT modify any existing code.
+         ===================================================== -->
+    <style>
+        /* â”€â”€ Floating toggle button â”€â”€ */
+        #lm-chat-toggle {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            font-size: 26px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 28px rgba(102, 126, 234, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        #lm-chat-toggle:hover {
+            transform: scale(1.12);
+            box-shadow: 0 14px 36px rgba(102, 126, 234, 0.75);
+        }
+        /* Badge pulse when closed */
+        #lm-chat-toggle .lm-badge {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            width: 13px;
+            height: 13px;
+            background: #ff5e7e;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            animation: lmPulse 1.8s infinite;
+        }
+        @keyframes lmPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50%       { transform: scale(1.3); opacity: 0.7; }
+        }
+        #lm-chat-toggle.lm-active .lm-badge { display: none; }
+
+        /* â”€â”€ Chat window â”€â”€ */
+        #lm-chat-window {
+            position: fixed;
+            bottom: 104px;
+            right: 28px;
+            width: 440px;
+            height: 620px;
+            background: #fff;
+            border-radius: 22px;
+            box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 10000;
+            font-family: 'Poppins', sans-serif;
+            opacity: 0;
+            transform: translateY(24px) scale(0.95);
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        #lm-chat-window.lm-open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: all;
+        }
+
+        /* â”€â”€ Header â”€â”€ */
+        #lm-chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            flex-shrink: 0;
+        }
+        .lm-header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.22);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+        .lm-header-info h6 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.1px;
+        }
+        .lm-header-info .lm-status {
+            font-size: 11px;
+            opacity: 0.85;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .lm-status-dot {
+            width: 7px;
+            height: 7px;
+            background: #7dffb3;
+            border-radius: 50%;
+            animation: lmPulse 2s infinite;
+        }
+        #lm-chat-close {
+            margin-left: auto;
+            background: rgba(255,255,255,0.18);
+            border: none;
+            color: #fff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        #lm-chat-close:hover { background: rgba(255,255,255,0.35); }
+
+        /* â”€â”€ Suggestion chips â”€â”€ */
+        #lm-chat-suggestions {
+            padding: 10px 14px 4px;
+            background: #f6f8ff;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            flex-shrink: 0;
+            border-bottom: 1px solid #e8ecff;
+        }
+        .lm-chip {
+            background: #fff;
+            border: 1.5px solid #c9d1f5;
+            color: #5563b8;
+            border-radius: 20px;
+            padding: 5px 13px;
+            font-size: 11.5px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.15s;
+            white-space: nowrap;
+        }
+        .lm-chip:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        /* â”€â”€ Messages â”€â”€ */
+        #lm-chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 14px 10px;
+            background: #f6f8ff;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            scroll-behavior: smooth;
+        }
+        #lm-chat-messages::-webkit-scrollbar { width: 5px; }
+        #lm-chat-messages::-webkit-scrollbar-thumb {
+            background: #c5c9e0;
+            border-radius: 10px;
+        }
+
+        /* Bubble base */
+        .lm-msg {
+            max-width: 80%;
+            padding: 11px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.6;
+            word-break: break-word;
+            animation: lmFadeUp 0.22s ease-out both;
+        }
+        @keyframes lmFadeUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* User bubble â€” right */
+        .lm-msg.lm-user {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 14px rgba(102,126,234,0.35);
+        }
+
+        /* Bot bubble â€” left */
+        .lm-msg.lm-bot {
+            background: #fff;
+            color: #2d2d2d;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        /* â”€â”€ Animated 3-dot typing indicator â”€â”€ */
+        .lm-typing-bubble {
+            background: #fff;
+            align-self: flex-start;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            padding: 12px 18px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            animation: lmFadeUp 0.2s ease-out both;
+        }
+        .lm-typing-bubble span {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #9fa8d5;
+            animation: lmDot 1.2s infinite ease-in-out;
+        }
+        .lm-typing-bubble span:nth-child(2) { animation-delay: 0.2s; }
+        .lm-typing-bubble span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes lmDot {
+            0%, 80%, 100% { transform: scale(0.7); opacity: 0.5; }
+            40%            { transform: scale(1.15); opacity: 1; }
+        }
+
+        /* â”€â”€ Footer / input â”€â”€ */
+        #lm-chat-footer {
+            padding: 11px 13px;
+            background: #fff;
+            border-top: 1px solid #eaedff;
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        #lm-chat-input {
+            flex: 1;
+            border: 1.5px solid #d0d5f0;
+            border-radius: 12px;
+            padding: 9px 13px;
+            font-size: 13px;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #f9faff;
+        }
+        #lm-chat-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.12);
+            background: #fff;
+        }
+        #lm-chat-send {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 9px 15px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: opacity 0.2s, transform 0.15s;
+            flex-shrink: 0;
+        }
+        #lm-chat-send:hover  { opacity: 0.88; transform: scale(1.07); }
+        #lm-chat-send:active { transform: scale(0.96); }
+        #lm-chat-send:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+        /* â”€â”€ Responsive â”€â”€ */
+        @media (max-width: 480px) {
+            #lm-chat-window {
+                width: calc(100vw - 18px);
+                right: 9px;
+                bottom: 88px;
+                height: 560px;
+            }
+            #lm-chat-toggle { bottom: 16px; right: 16px; }
+        }
+    </style>
+
+    <!-- Floating toggle button -->
+    <button id="lm-chat-toggle" aria-label="Open FAQ Chatbot" title="LoanMate FAQ Bot">
+        <i class="fas fa-robot"></i>
+        <span class="lm-badge" aria-hidden="true"></span>
+    </button>
+
+    <!-- Chat window -->
+    <div id="lm-chat-window" role="dialog" aria-label="LoanMate FAQ Chatbot" aria-modal="true">
+
+        <!-- Header -->
+        <div id="lm-chat-header">
+            <div class="lm-header-avatar"><i class="fas fa-robot"></i></div>
+            <div class="lm-header-info">
+                <h6>LoanMate FAQ Bot</h6>
+                <div class="lm-status">
+                    <span class="lm-status-dot"></span> Online â€” here to help
+                </div>
+            </div>
+            <button id="lm-chat-close" aria-label="Close chatbot">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Quick-suggestion chips -->
+        <div id="lm-chat-suggestions" role="list" aria-label="Quick suggestions">
+            <button class="lm-chip" data-q="loan types"        role="listitem">ðŸ¦ Loan Types</button>
+            <button class="lm-chip" data-q="how to apply"     role="listitem">ðŸ“ How to Apply</button>
+            <button class="lm-chip" data-q="documents"        role="listitem">ðŸ“„ Documents</button>
+            <button class="lm-chip" data-q="loan status"      role="listitem">ðŸ” Loan Status</button>
+            <button class="lm-chip" data-q="loan approval time" role="listitem">â± Approval Time</button>
+            <button class="lm-chip" data-q="credit score"     role="listitem">ðŸ’³ Credit Score</button>
+        </div>
+
+        <!-- Messages -->
+        <div id="lm-chat-messages" aria-live="polite">
+            <div class="lm-msg lm-bot">
+                ðŸ‘‹ Hi! I'm the <strong>LoanMate FAQ Bot</strong>.<br>
+                Tap a suggestion below or type your question!
+            </div>
+        </div>
+
+        <!-- Input footer -->
+        <div id="lm-chat-footer">
+            <input
+                type="text"
+                id="lm-chat-input"
+                placeholder="Ask a questionâ€¦"
+                autocomplete="off"
+                maxlength="200"
+                aria-label="Type your question"
+            >
+            <button id="lm-chat-send" aria-label="Send message">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Chatbot JS (v2) -->
+    <script>
+    (function () {
+        'use strict';
+
+        var toggle   = document.getElementById('lm-chat-toggle');
+        var chatWin  = document.getElementById('lm-chat-window');
+        var closeBtn = document.getElementById('lm-chat-close');
+        var input    = document.getElementById('lm-chat-input');
+        var sendBtn  = document.getElementById('lm-chat-send');
+        var messages = document.getElementById('lm-chat-messages');
+        var chips    = document.querySelectorAll('.lm-chip');
+
+        /* â”€â”€ Open / close â”€â”€ */
+        toggle.addEventListener('click', function () {
+            var isOpen = chatWin.classList.toggle('lm-open');
+            toggle.classList.toggle('lm-active', isOpen);
+            if (isOpen) { input.focus(); }
+        });
+        closeBtn.addEventListener('click', function () {
+            chatWin.classList.remove('lm-open');
+            toggle.classList.remove('lm-active');
+        });
+
+        /* â”€â”€ Suggestion chips â”€â”€ */
+        chips.forEach(function (chip) {
+            chip.addEventListener('click', function () {
+                var q = chip.getAttribute('data-q');
+                if (q) { triggerSend(q); }
+            });
+        });
+
+        /* â”€â”€ Append a message bubble â”€â”€ */
+        function appendMsg(html, role) {
+            var div = document.createElement('div');
+            div.className = 'lm-msg ' + (role === 'user' ? 'lm-user' : 'lm-bot');
+            if (role === 'user') {
+                div.textContent = html;
+            } else {
+                div.innerHTML = html;   // bot messages may contain <strong> etc.
+            }
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        /* â”€â”€ Animated 3-dot typing indicator â”€â”€ */
+        function showTyping() {
+            removeTyping();
+            var bubble = document.createElement('div');
+            bubble.className = 'lm-typing-bubble';
+            bubble.id = 'lm-typing-indicator';
+            bubble.innerHTML = '<span></span><span></span><span></span>';
+            messages.appendChild(bubble);
+            messages.scrollTop = messages.scrollHeight;
+        }
+        function removeTyping() {
+            var t = document.getElementById('lm-typing-indicator');
+            if (t) { t.remove(); }
+        }
+
+        /* â”€â”€ Core send function â”€â”€ */
+        function triggerSend(text) {
+            if (!text) { return; }
+
+            appendMsg(text, 'user');
+            input.value = '';
+            sendBtn.disabled = true;
+            showTyping();
+
+            var url = '/chatbot/faq/?message=' + encodeURIComponent(text);
+
+            fetch(url)
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    var reply = data.reply || 'Sorry, something went wrong.';
+                    // 800 ms simulated "thinking" delay as required
+                    setTimeout(function () {
+                        removeTyping();
+                        appendMsg(reply, 'bot');
+                        sendBtn.disabled = false;
+                        input.focus();
+                    }, 800);
+                })
+                .catch(function () {
+                    setTimeout(function () {
+                        removeTyping();
+                        appendMsg('âš ï¸ Could not reach the server. Please try again.', 'bot');
+                        sendBtn.disabled = false;
+                        input.focus();
+                    }, 800);
+                });
+        }
+
+        // Send button click
+        sendBtn.addEventListener('click', function () {
+            triggerSend(input.value.trim());
+        });
+
+        // Enter key
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') { triggerSend(input.value.trim()); }
+        });
+
+    })();
+    </script>
+    <!-- ===== END LOANMATE FAQ CHATBOT WIDGET v2 ===== -->
 </body>
 
 </html>
