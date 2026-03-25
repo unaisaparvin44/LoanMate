@@ -1,6 +1,9 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+import json
+from django.http import JsonResponse
+from ml_engine.predictor import predict_loan_approval
 
 def home(request):
     if request.user.is_authenticated:
@@ -137,4 +140,48 @@ def profile_edit(request):
         return redirect('accounts:profile_view')
     
     return render(request, 'accounts/profile_edit.html', {'profile': profile})
+
+def calculate_eligibility(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            income = float(data.get('income', 0))
+            loan_amount = float(data.get('loan_amount', 0))
+            credit_score = int(data.get('credit_score', 0))
+            tenure = int(data.get('tenure', 0))
+
+            R = 0.10 / 12
+            N = tenure
+            
+            emi = 0
+            if N > 0:
+                try:
+                    emi = (loan_amount * R * ((1 + R) ** N)) / (((1 + R) ** N) - 1)
+                except ZeroDivisionError:
+                    emi = 0
+
+            eligible = emi <= 0.4 * income
+
+            prediction = predict_loan_approval({
+                "income": income,
+                "credit_score": credit_score,
+                "loan_amount": loan_amount
+            })
+
+            prob = prediction.get('probability', 0) if isinstance(prediction, dict) else prediction
+
+            try:
+                prob = float(prob)
+                probability = int(prob * 100) if 0 <= prob <= 1 else int(prob)
+            except (TypeError, ValueError):
+                probability = 0
+
+            return JsonResponse({
+                "emi": round(emi, 2),
+                "eligible": eligible,
+                "probability": probability
+            })
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'POST required'}, status=405)
 
