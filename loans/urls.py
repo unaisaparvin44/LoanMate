@@ -9,6 +9,7 @@ urlpatterns = [
     path('apply/home/', views.apply_home_loan, name='apply_home_loan'),
     path('apply/education/', views.apply_education_loan, name='apply_education_loan'),
     path('apply/vehicle/', views.apply_vehicle_loan, name='apply_vehicle_loan'),
+    path('apply/agriculture/', views.apply_agriculture_loan, name='apply_agriculture_loan'),
     path('my-applications/', views.my_applications, name='my_applications'),
     path('application/<int:pk>/', views.application_detail_user, name='application_detail'),
 ]
